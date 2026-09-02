@@ -3,230 +3,911 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moni Enterprises | Manpower & Industrial Workforce Solutions</title>
+    <title>Moni Enterprises - Complete Management System</title>
+    <!-- PDF Processing Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f7f6;
             color: #333;
             line-height: 1.6;
         }
-        /* Header & Navigation */
-        header {
-            background-color: #0d233a;
-            color: #ffffff;
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00a8ff;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-        }
-        nav ul li {
-            margin-left: 20px;
-        }
-        nav ul li a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
-        }
-        nav ul li a:hover {
-            color: #00a8ff;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(13, 35, 58, 0.85), rgba(13, 35, 58, 0.85)), url('https://via.placeholder.com/1200x500') no-repeat center center/cover;
+        .language-header {
+            background-color: #144717;
             color: white;
-            text-align: center;
-            padding: 100px 20px;
+            padding: 8px 15px;
+            text-align: right;
+            font-size: 14px;
         }
-        .hero h1 {
-            font-size: 38px;
+        .header {
+            background-color: #1b5e20;
+            color: #ffffff;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            text-transform: uppercase;
+        }
+        .header p {
+            font-size: 16px;
+            color: #c8e6c9;
+        }
+        .company-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .company-gallery img {
+            width: 140px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #c8e6c9;
+        }
+        .container {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-size: 20px;
+            color: #1b5e20;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #81c784;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .admin-title {
+            color: #b71c1c;
+            border-bottom-color: #e57373;
+        }
+        .input-group {
             margin-bottom: 15px;
         }
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 25px;
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+            font-family: inherit;
         }
         .btn {
-            display: inline-block;
-            background-color: #00a8ff;
+            background-color: #2e7d32;
             color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
             font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
         }
         .btn:hover {
-            background-color: #0086cc;
+            background-color: #1b5e20;
         }
-
-        /* Services Section */
-        .services {
-            padding: 60px 5%;
-            text-align: center;
+        .btn-blue {
+            background-color: #1565c0;
         }
-        .services h2 {
-            margin-bottom: 40px;
-            color: #0d233a;
+        .btn-blue:hover {
+            background-color: #0d47a1;
         }
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+        .btn-red {
+            background-color: #d32f2f;
         }
-        .service-card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: left;
+        .btn-red:hover {
+            background-color: #b71c1c;
         }
-        .service-card h3 {
-            color: #0d233a;
-            margin-bottom: 15px;
-        }
-
-        /* About Section */
-        .about {
-            background-color: #eef2f5;
-            padding: 60px 5%;
-            text-align: center;
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: 60px 5%;
-            background: white;
-        }
-        .contact-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            justify-content: space-between;
-        }
-        .contact-info, .contact-form {
-            flex: 1;
-            min-width: 300px;
-        }
-        .contact-form input, .contact-form textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .contact-form button {
-            background: #0d233a;
-            color: white;
-            padding: 12px 25px;
+        .tab-btn {
+            padding: 8px 15px;
+            background-color: #e0e0e0;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            border-radius: 4px;
+            margin-right: 5px;
         }
-
-        /* Footer */
-        footer {
-            background-color: #0d233a;
+        .tab-btn.active {
+            background-color: #1b5e20;
+            color: white;
+        }
+        #joining-success-box, #edit-success-box, #admin-msg-box, #pdf-process-box {
+            display: none;
+            background-color: #e8f5e9;
+            border: 2px dashed #2e7d32;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .profile-card {
+            border: 2px solid #2e7d32;
+            background-color: #f1f8e9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid #c8e6c9;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .profile-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #2e7d32;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+        .slip-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .slip-table td, .slip-table th {
+            padding: 8px 5px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        .slip-table td.bold {
+            font-weight: bold;
+            color: #1b5e20;
+            width: 45%;
+        }
+        .logout-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            font-size: 13px;
+        }
+        .preview-box {
+            margin-top: 10px;
+            width: 90px;
+            height: 90px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fafafa;
+        }
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .status-active {
+            background-color: #c8e6c9;
+            color: #1b5e20;
+        }
+        .status-inactive {
+            background-color: #ffcdd2;
+            color: #b71c1c;
+        }
+        .footer {
+            background-color: #1b5e20;
             color: white;
             text-align: center;
             padding: 20px;
-            margin-top: 40px;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="logo">Moni Enterprises</div>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="language-header">
+        <span>Select Language: </span>
+        <div id="google_translate_element" style="display: inline-block;"></div>
+    </div>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <h1>Reliable & Skilled Manpower Supply Solutions</h1>
-        <p>Providing experienced operators, technicians, and industrial workforce for your factory operations.</p>
-        <a href="#contact" class="btn">Request Contract</a>
-    </section>
-
-    <!-- Services -->
-    <section class="services" id="services">
-        <h2>Our Professional Services</h2>
-        <div class="service-grid">
-            <div class="service-card">
-                <h3>Industrial Staffing</h3>
-                <p>Supply of skilled and semi-skilled operators and workers for automobile and manufacturing plants.</p>
-            </div>
-            <div class="service-card">
-                <h3>Technical & Engineering</h3>
-                <p>Contract facilities for experienced technicians, fabricators, and mechanical support staff.</p>
-            </div>
-            <div class="service-card">
-                <h3>Contract Workforce</h3>
-                <p>Project-based or long-term manpower management and end-to-end workforce support.</p>
-            </div>
+    <div class="header">
+        <h1>Moni Enterprises</h1>
+        <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
+        
+        <!-- Company & Office Photo Gallery Section -->
+        <div class="company-gallery">
+            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300" alt="Office Building">
+            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300" alt="Manpower Worksite">
+            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300" alt="Industrial Operations">
         </div>
-    </section>
+    </div>
 
-    <!-- About -->
-    <section class="about" id="about">
-        <h2>About Moni Enterprises</h2>
-        <p style="max-width: 800px; margin: 20px auto 0;">We streamline industrial operations by supplying the right manpower at the right time. Delivering quality service and efficient workforce management is our core commitment.</p>
-    </section>
+    <div class="container">
 
-    <!-- Contact -->
-    <section class="contact" id="contact">
-        <h2>Contact Us</h2>
-        <br>
-        <div class="contact-container">
-            <div class="contact-info">
-                <h3>Office Details</h3>
-                <p><strong>Company:</strong> Moni Enterprises</p>
-                <p><strong>Email:</strong> contact@monienterprises.in</p>
-                <p><strong>Phone:</strong> +91 XXXXXXXXXX</p>
+        <!-- Master Admin Panel -->
+        <div class="card" style="border: 2px solid #b71c1c;">
+            <h2 class="section-title admin-title">Master Admin Panel (Proprietor Only)</h2>
+            
+            <div id="admin-auth">
+                <div class="input-group">
+                    <label style="color: #b71c1c;">Admin Username:</label>
+                    <input type="text" id="admin-user" placeholder="Enter admin username (admin)">
+                </div>
+                <div class="input-group">
+                    <label style="color: #b71c1c;">Admin Password:</label>
+                    <input type="password" id="admin-pass" placeholder="Enter password (admin123)">
+                </div>
+                <button class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
             </div>
-            <div class="contact-form">
-                <form action="#">
-                    <input type="text" placeholder="Your Name" required>
-                    <input type="email" placeholder="Your Email Address" required>
-                    <input type="text" placeholder="Company Name">
-                    <textarea rows="4" placeholder="Describe your manpower requirements..."></textarea>
-                    <button type="submit">Send Message</button>
+
+            <div id="admin-dashboard" style="display: none;">
+                <button class="logout-btn" onclick="logoutAdmin()">Logout Admin</button>
+                <h4 style="color: #b71c1c; margin-bottom: 15px;">Manage Supervisors & Access Controls</h4>
+
+                <form id="add-sup-form" onsubmit="createNewSupervisor(event)" style="background-color: #fff8f8; padding: 15px; border-radius: 5px; border: 1px solid #ffcdd2; margin-bottom: 20px;">
+                    <h5 style="color: #b71c1c; margin-bottom: 10px;">Create New Supervisor Account</h5>
+                    <div class="input-group">
+                        <label>Supervisor ID:</label>
+                        <input type="text" id="add-sup-id" placeholder="e.g. SUP-103" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Supervisor Full Name:</label>
+                        <input type="text" id="add-sup-name" placeholder="Enter supervisor name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Assign Password:</label>
+                        <input type="text" id="add-sup-pass" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-red">Create / Add Supervisor</button>
                 </form>
+
+                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management:</h5>
+                <table class="slip-table" style="margin-bottom: 15px;">
+                    <thead>
+                        <tr style="background-color: #f5f5f5;">
+                            <th>SUP ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supervisor-table-body">
+                    </tbody>
+                </table>
+
+                <div id="admin-msg-box">
+                    <p id="admin-msg-text" style="font-weight: bold; color: #1b5e20;">Action completed successfully!</p>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Moni Enterprises. All Rights Reserved.</p>
-    </footer>
+        <!-- Supervisor Management Panel -->
+        <div class="card" id="supervisor-section">
+            <h2 class="section-title">Supervisor Management Panel</h2>
+            
+            <div id="supervisor-auth">
+                <div class="input-group">
+                    <label>Supervisor ID:</label>
+                    <input type="text" id="sup-id" placeholder="e.g. SUP-101">
+                </div>
+                <div class="input-group">
+                    <label>Password:</label>
+                    <input type="password" id="sup-pass" placeholder="Enter password">
+                </div>
+                <button class="btn" onclick="loginSupervisor()">Login Supervisor Desk</button>
+            </div>
 
+            <div id="supervisor-form-box" style="display: none;">
+                <button class="logout-btn" onclick="logoutSupervisor()">Logout Supervisor</button>
+                <p style="margin-bottom: 15px; color: #1565c0; font-weight: bold;">
+                    Active Supervisor: <span id="active-sup-id">-</span>
+                </p>
+
+                <div style="margin-bottom: 20px;">
+                    <button class="tab-btn active" id="tab-add-btn" onclick="switchTab('add')">Add New Worker</button>
+                    <button class="tab-btn" id="tab-edit-btn" onclick="switchTab('edit')">Edit / Manage Worker</button>
+                    <button class="tab-btn" id="tab-pdf-btn" onclick="switchTab('pdf')">Bulk Salary Slip PDF</button>
+                </div>
+
+                <!-- 1. New Worker Joining Form -->
+                <form id="joining-form" onsubmit="processNewJoining(event)">
+                    <div class="input-group">
+                        <label>Worker Full Name:</label>
+                        <input type="text" id="new-name" placeholder="Enter full name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Father's Name:</label>
+                        <input type="text" id="new-father" placeholder="Enter father's name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>PF Number:</label>
+                        <input type="text" id="new-pf" placeholder="Enter PF Number (e.g. WB/CAL/12345/101)" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Full Address:</label>
+                        <textarea id="new-address" rows="2" placeholder="Village/Town, Post, District" required></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Qualification:</label>
+                        <select id="new-qual" required>
+                            <option value="">-- Select Qualification --</option>
+                            <option value="Non-Matric / Below 10th">Non-Matric / Below 10th</option>
+                            <option value="10th Pass (Madhyamik)">10th Pass (Madhyamik)</option>
+                            <option value="12th Pass (Higher Secondary)">12th Pass (Higher Secondary)</option>
+                            <option value="ITI / Diploma">ITI / Diploma</option>
+                            <option value="Graduate">Graduate</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Monthly Salary:</label>
+                        <input type="text" id="new-salary" placeholder="e.g. ₹ 18,500.00" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>OT Rate per Hour:</label>
+                        <input type="text" id="new-ot" placeholder="e.g. ₹ 80 / Hour" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Worker Photo (Upload):</label>
+                        <input type="file" id="new-photo" accept="image/*" onchange="previewWorkerImage(event)" required>
+                        <div class="preview-box">
+                            <span id="preview-text" style="font-size: 11px; color: #888;">Photo Preview</span>
+                            <img id="img-preview" alt="Preview">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-blue">Create Worker Profile & ID</button>
+                </form>
+
+                <!-- 2. Edit & Deactivate Worker Section -->
+                <div id="edit-worker-section" style="display: none;">
+                    <div class="input-group">
+                        <label>Search Worker (Enter PF Number or Worker ID):</label>
+                        <input type="text" id="search-query" placeholder="e.g. WB/CAL/12345/101 or ME-1001">
+                        <button class="btn" style="background-color: #f57c00; margin-top: 5px;" onclick="searchWorkerToEdit()">Search Worker</button>
+                    </div>
+
+                    <form id="edit-form" style="display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;" onsubmit="saveEditedWorker(event)">
+                        <h4 style="color: #1b5e20; margin-bottom: 10px;">Edit Worker Profile & Account Status:</h4>
+                        
+                        <input type="hidden" id="edit-target-pf">
+
+                        <div class="input-group">
+                            <label>Worker Full Name:</label>
+                            <input type="text" id="edit-name" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Father's Name:</label>
+                            <input type="text" id="edit-father" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Monthly Salary:</label>
+                            <input type="text" id="edit-salary" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>OT Rate per Hour:</label>
+                            <input type="text" id="edit-ot" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Account Status / Job Status:</label>
+                            <select id="edit-status" required>
+                                <option value="Active">Active (Working)</option>
+                                <option value="Inactive">Inactive / Left Job (Block ID)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-blue">Save & Update Worker Status</button>
+                    </form>
+                </div>
+
+                <!-- 3. Bulk PDF Payslip Splitter Section (Strict Match: Name + Company + PF Number) -->
+                <div id="bulk-pdf-section" style="display: none;">
+                    <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
+                        সব কর্মীর স্যালারি স্লিপের সম্মিলিত পিডিএফ ফাইল এখানে আপলোড করুন। সিস্টেম প্রতিটি পেজের টেক্সট স্ক্যান করে <strong>Worker Name + Company (Moni Enterprises) + PF Number</strong> হুবহু মিলে গেলে তবেই সেই পেজটি নির্দিষ্ট কর্মীর পোর্টালে যুক্ত করবে।
+                    </p>
+
+                    <div class="input-group">
+                        <label>Select Combined PDF File:</label>
+                        <input type="file" id="bulk-pdf-file" accept="application/pdf">
+                    </div>
+
+                    <button class="btn btn-blue" onclick="processAndSplitPDF()">Match & Distribute Salary Slips Automatically</button>
+
+                    <div id="pdf-process-box">
+                        <p id="pdf-status-text" style="font-weight: bold; color: #1565c0;">Processing PDF pages...</p>
+                    </div>
+                </div>
+
+                <div id="joining-success-box">
+                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful!</h3>
+                    <p><strong>Worker ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
+                    <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
+                </div>
+
+                <div id="edit-success-box">
+                    <h3 style="color: #1b5e20; margin-bottom: 5px;">✓ Worker Details & Status Updated!</h3>
+                    <p>The worker info and account status have been updated in the database.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Worker Portal (Login via PF Number) -->
+        <div class="card">
+            <h2 class="section-title">Worker Profile Portal</h2>
+            
+            <div id="login-box">
+                <div class="input-group">
+                    <label>Enter PF Number:</label>
+                    <input type="text" id="pf-num-input" placeholder="e.g. WB/CAL/12345/101">
+                </div>
+                
+                <button class="btn" onclick="loginWorker()">View Profile & Payslip</button>
+            </div>
+
+            <div id="worker-profile" style="display: none;">
+                <button class="logout-btn" onclick="logoutWorker()">Logout</button>
+                
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <img id="worker-photo" class="profile-img" src="" alt="Worker Photo">
+                        <div class="profile-title">
+                            <h3 id="worker-name">-</h3>
+                            <p style="color: #555; font-weight: bold;" id="worker-pfno">-</p>
+                            <p style="color: #1565c0; font-size: 14px; font-weight: bold;">Worker ID: <span id="worker-userid">-</span></p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: #1b5e20; text-align: center; margin-bottom: 10px;">Official Worker Profile</h4>
+                    
+                    <table class="slip-table">
+                        <tr>
+                            <td class="bold">Company Name:</td>
+                            <td style="font-weight: bold; color: #1565c0;">Moni Enterprises</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Father's Name:</td>
+                            <td id="dash-father">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Full Address:</td>
+                            <td id="dash-address">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Qualification:</td>
+                            <td id="dash-qual">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Monthly Salary:</td>
+                            <td id="dash-salary" style="font-weight: bold; color: #2e7d32; font-size: 18px;">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">OT Rate per Hour:</td>
+                            <td id="dash-ot" style="font-weight: bold; color: #1565c0;">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Status:</td>
+                            <td><span id="dash-status-badge" class="status-badge status-active">Active Worker</span></td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Monthly Payslip:</td>
+                            <td id="payslip-container">
+                                <span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <button class="btn btn-blue" style="margin-top: 15px;" onclick="window.print()">Download Profile Card (PDF / Print)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Moni Enterprises. All Rights Reserved. | Manpower Supply & Contractor Services</p>
+    </div>
+
+    <script type="text/javascript">
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        var supervisorAccounts = {
+            "SUP-101": { pass: "1234", name: "Ramesh Kumar", status: "Active" },
+            "SUP-102": { pass: "1234", name: "Suresh Das", status: "Active" }
+        };
+
+        var workerDatabase = {
+            "WB/CAL/12345/101": {
+                userid: "ME-1001",
+                name: "Monirul Sekh",
+                company: "Moni Enterprises",
+                pfNumber: "WB/CAL/12345/101",
+                father: "Alauddin Sekh",
+                address: "Purba Bardhaman, West Bengal",
+                qual: "12th Pass (Higher Secondary)",
+                salary: "₹ 18,500.00",
+                ot: "₹ 90 / Hour",
+                photo: "https://via.placeholder.com/110",
+                status: "Active",
+                salarySlipPdf: null
+            }
+        };
+
+        var currentBase64Photo = "https://via.placeholder.com/110";
+
+        function loginAdmin() {
+            var user = document.getElementById('admin-user').value.trim();
+            var pass = document.getElementById('admin-pass').value.trim();
+
+            if (user === "admin" && pass === "admin123") {
+                document.getElementById('admin-auth').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                renderSupervisorTable();
+            } else {
+                alert("Invalid Master Admin Credentials!");
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-auth').style.display = 'block';
+            document.getElementById('admin-dashboard').style.display = 'none';
+            document.getElementById('admin-user').value = '';
+            document.getElementById('admin-pass').value = '';
+        }
+
+        function renderSupervisorTable() {
+            var tbody = document.getElementById('supervisor-table-body');
+            tbody.innerHTML = '';
+
+            for (var supId in supervisorAccounts) {
+                var sup = supervisorAccounts[supId];
+                var row = document.createElement('tr');
+
+                var statusBadge = sup.status === 'Active' ? 
+                    '<span class="status-badge status-active">Active</span>' : 
+                    '<span class="status-badge status-inactive">Blocked</span>';
+
+                var toggleBtn = sup.status === 'Active' ? 
+                    '<button class="btn btn-red" style="padding: 4px 8px; font-size: 12px; margin: 0;" onclick="toggleSupStatus(\'' + supId + '\')">Block Access</button>' : 
+                    '<button class="btn" style="padding: 4px 8px; font-size: 12px; margin: 0; background-color: #2e7d32;" onclick="toggleSupStatus(\'' + supId + '\')">Unblock</button>';
+
+                row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
+                                '<td>' + sup.name + '</td>' +
+                                '<td>' + statusBadge + '</td>' +
+                                '<td>' + toggleBtn + '</td>';
+                
+                tbody.appendChild(row);
+            }
+        }
+
+        function toggleSupStatus(supId) {
+            if (supervisorAccounts[supId]) {
+                supervisorAccounts[supId].status = supervisorAccounts[supId].status === 'Active' ? 'Inactive' : 'Active';
+                renderSupervisorTable();
+            }
+        }
+
+        function createNewSupervisor(e) {
+            e.preventDefault();
+            var id = document.getElementById('add-sup-id').value.trim();
+            var name = document.getElementById('add-sup-name').value.trim();
+            var pass = document.getElementById('add-sup-pass').value.trim();
+
+            supervisorAccounts[id] = { pass: pass, name: name, status: "Active" };
+            document.getElementById('add-sup-form').reset();
+            renderSupervisorTable();
+            alert("New Supervisor created successfully!");
+        }
+
+        function loginSupervisor() {
+            var id = document.getElementById('sup-id').value.trim();
+            var pass = document.getElementById('sup-pass').value.trim();
+
+            if (supervisorAccounts[id]) {
+                if (supervisorAccounts[id].status === "Inactive") {
+                    alert("ACCESS DENIED! Supervisor ID is blocked.");
+                    return;
+                }
+                if (supervisorAccounts[id].pass === pass) {
+                    document.getElementById('supervisor-auth').style.display = 'none';
+                    document.getElementById('supervisor-form-box').style.display = 'block';
+                    document.getElementById('active-sup-id').innerText = id + " (" + supervisorAccounts[id].name + ")";
+                } else {
+                    alert("Invalid Password!");
+                }
+            } else {
+                alert("Supervisor ID not found!");
+            }
+        }
+
+        function logoutSupervisor() {
+            document.getElementById('supervisor-auth').style.display = 'block';
+            document.getElementById('supervisor-form-box').style.display = 'none';
+        }
+
+        function switchTab(type) {
+            document.getElementById('joining-success-box').style.display = 'none';
+            document.getElementById('edit-success-box').style.display = 'none';
+            document.getElementById('pdf-process-box').style.display = 'none';
+
+            document.getElementById('tab-add-btn').classList.remove('active');
+            document.getElementById('tab-edit-btn').classList.remove('active');
+            document.getElementById('tab-pdf-btn').classList.remove('active');
+
+            document.getElementById('joining-form').style.display = 'none';
+            document.getElementById('edit-worker-section').style.display = 'none';
+            document.getElementById('bulk-pdf-section').style.display = 'none';
+
+            if(type === 'add') {
+                document.getElementById('tab-add-btn').classList.add('active');
+                document.getElementById('joining-form').style.display = 'block';
+            } else if(type === 'edit') {
+                document.getElementById('tab-edit-btn').classList.add('active');
+                document.getElementById('edit-worker-section').style.display = 'block';
+            } else if(type === 'pdf') {
+                document.getElementById('tab-pdf-btn').classList.add('active');
+                document.getElementById('bulk-pdf-section').style.display = 'block';
+            }
+        }
+
+        function previewWorkerImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('img-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+                document.getElementById('preview-text').style.display = 'none';
+                currentBase64Photo = reader.result;
+            };
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function processNewJoining(e) {
+            e.preventDefault();
+            
+            var name = document.getElementById('new-name').value.trim();
+            var father = document.getElementById('new-father').value.trim();
+            var pf = document.getElementById('new-pf').value.trim();
+            var address = document.getElementById('new-address').value.trim();
+            var qual = document.getElementById('new-qual').value;
+            var salary = document.getElementById('new-salary').value.trim();
+            var ot = document.getElementById('new-ot').value.trim();
+
+            var autoUserId = "ME-" + Math.floor(1000 + Math.random() * 9000);
+
+            workerDatabase[pf] = {
+                userid: autoUserId,
+                name: name,
+                company: "Moni Enterprises",
+                pfNumber: pf,
+                father: father,
+                address: address,
+                qual: qual,
+                salary: salary,
+                ot: ot,
+                photo: currentBase64Photo,
+                status: "Active",
+                salarySlipPdf: null
+            };
+
+            document.getElementById('gen-userid').innerText = autoUserId;
+            document.getElementById('gen-pf').innerText = pf;
+            document.getElementById('joining-form').reset();
+            document.getElementById('img-preview').style.display = 'none';
+            document.getElementById('preview-text').style.display = 'block';
+            document.getElementById('joining-success-box').style.display = 'block';
+        }
+
+        function searchWorkerToEdit() {
+            var q = document.getElementById('search-query').value.trim();
+            var foundKey = null;
+
+            for (var key in workerDatabase) {
+                if (key === q || workerDatabase[key].userid === q) {
+                    foundKey = key;
+                    break;
+                }
+            }
+
+            if (foundKey) {
+                var w = workerDatabase[foundKey];
+                document.getElementById('edit-target-pf').value = foundKey;
+                document.getElementById('edit-name').value = w.name;
+                document.getElementById('edit-father').value = w.father || '';
+                document.getElementById('edit-salary').value = w.salary;
+                document.getElementById('edit-ot').value = w.ot;
+                document.getElementById('edit-status').value = w.status || 'Active';
+
+                document.getElementById('edit-form').style.display = 'block';
+                document.getElementById('edit-success-box').style.display = 'none';
+            } else {
+                alert("Worker not found!");
+                document.getElementById('edit-form').style.display = 'none';
+            }
+        }
+
+        function saveEditedWorker(e) {
+            e.preventDefault();
+            var pf = document.getElementById('edit-target-pf').value;
+
+            if(workerDatabase[pf]) {
+                workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
+                workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
+                workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
+                workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
+                workerDatabase[pf].status = document.getElementById('edit-status').value;
+
+                document.getElementById('edit-form').style.display = 'none';
+                document.getElementById('edit-success-box').style.display = 'block';
+            }
+        }
+
+        // --- BULK PDF STRICT MATCHING: Name + Company (Moni Enterprises) + PF Number ---
+        async function processAndSplitPDF() {
+            var fileInput = document.getElementById('bulk-pdf-file');
+            if (fileInput.files.length === 0) {
+                alert("Please select a PDF file first!");
+                return;
+            }
+
+            var statusBox = document.getElementById('pdf-process-box');
+            var statusText = document.getElementById('pdf-status-text');
+            statusBox.style.display = 'block';
+            statusText.innerText = "Scanning PDF pages...";
+
+            var file = fileInput.files[0];
+            var arrayBuffer = await file.arrayBuffer();
+
+            try {
+                var pdfDocObj = await PDFLib.PDFDocument.load(arrayBuffer);
+                var pdfJsDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                var totalPages = pdfJsDoc.numPages;
+
+                var assignedCount = 0;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    statusText.innerText = "Analyzing Page " + i + " of " + totalPages + "...";
+                    
+                    var page = await pdfJsDoc.getPage(i);
+                    var textContent = await page.getTextContent();
+                    var pageText = textContent.items.map(item => item.str).join(" ").toLowerCase();
+
+                    var matchedPfKey = null;
+
+                    for (var pfKey in workerDatabase) {
+                        var worker = workerDatabase[pfKey];
+                        
+                        var nameMatch = pageText.includes(worker.name.toLowerCase());
+                        var companyMatch = pageText.includes(worker.company.toLowerCase());
+                        var pfMatch = pageText.includes(worker.pfNumber.toLowerCase());
+
+                        // All 3 parameters must match strictly
+                        if (nameMatch && companyMatch && pfMatch) {
+                            matchedPfKey = pfKey;
+                            break;
+                        }
+                    }
+
+                    if (matchedPfKey) {
+                        var singleDoc = await PDFLib.PDFDocument.create();
+                        var [copiedPage] = await singleDoc.copyPages(pdfDocObj, [i - 1]);
+                        singleDoc.addPage(copiedPage);
+
+                        var pdfDataUri = await singleDoc.saveAsBase64({ dataUri: true });
+                        workerDatabase[matchedPfKey].salarySlipPdf = pdfDataUri;
+                        assignedCount++;
+                    }
+                }
+
+                if(assignedCount > 0) {
+                    statusText.innerText = "✓ Success! " + assignedCount + " salary slip(s) matched and assigned to workers.";
+                } else {
+                    statusText.innerText = "⚠️ Processed " + totalPages + " pages, but Name + Company + PF Number didn't match together.";
+                }
+                
+                fileInput.value = '';
+            } catch (err) {
+                alert("Error processing PDF: " + err.message);
+                statusBox.style.display = 'none';
+            }
+        }
+
+        function loginWorker() {
+            var pfInput = document.getElementById('pf-num-input').value.trim();
+            if (pfInput === "") {
+                alert("Please enter PF Number!");
+                return;
+            }
+
+            if (workerDatabase[pfInput]) {
+                var worker = workerDatabase[pfInput];
+
+                if (worker.status === "Inactive") {
+                    alert("This worker account has been DEACTIVATED!");
+                    return;
+                }
+                
+                document.getElementById('worker-userid').innerText = worker.userid;
+                document.getElementById('worker-name').innerText = worker.name;
+                document.getElementById('worker-pfno').innerText = worker.pfNumber;
+                document.getElementById('dash-father').innerText = worker.father || '-';
+                document.getElementById('dash-address').innerText = worker.address;
+                document.getElementById('dash-qual').innerText = worker.qual;
+                document.getElementById('dash-salary').innerText = worker.salary;
+                document.getElementById('dash-ot').innerText = worker.ot;
+                document.getElementById('worker-photo').src = worker.photo;
+
+                var badge = document.getElementById('dash-status-badge');
+                badge.innerText = "Active Worker";
+                badge.className = "status-badge status-active";
+
+                var payslipContainer = document.getElementById('payslip-container');
+                if (worker.salarySlipPdf) {
+                    payslipContainer.innerHTML = '<a href="' + worker.salarySlipPdf + '" download="Payslip_' + worker.userid + '.pdf" class="btn btn-blue" style="padding: 5px 12px; font-size: 13px; text-decoration: none; display: inline-block; width: auto;">📄 Download Salary Slip (PDF)</a>';
+                } else {
+                    payslipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
+                }
+
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('worker-profile').style.display = 'block';
+            } else {
+                alert("PF Number not found in database!");
+            }
+        }
+
+        function logoutWorker() {
+            document.getElementById('pf-num-input').value = '';
+            document.getElementById('worker-profile').style.display = 'none';
+            document.getElementById('login-box').style.display = 'block';
+        }
+
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'bn,en,hi',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
