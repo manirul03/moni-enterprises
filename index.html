@@ -257,11 +257,11 @@
             <div id="admin-auth">
                 <div class="input-group">
                     <label style="color: #b71c1c;">Admin Username:</label>
-                    <input type="text" id="admin-user" placeholder="Enter admin username (admin)">
+                    <input type="text" id="admin-user" placeholder="Enter admin username (Manirul@me)">
                 </div>
                 <div class="input-group">
                     <label style="color: #b71c1c;">Admin Password:</label>
-                    <input type="password" id="admin-pass" placeholder="Enter password (admin123)">
+                    <input type="password" id="admin-pass" placeholder="Enter password (Moni@2026)">
                 </div>
                 <button class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
             </div>
@@ -436,7 +436,7 @@
                     </form>
                 </div>
 
-                <!-- 3. Bulk PDF Payslip Splitter Section (Strict Match: Name + Company + PF Number) -->
+                <!-- 3. Bulk PDF Payslip Splitter Section -->
                 <div id="bulk-pdf-section" style="display: none;">
                     <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
@@ -539,6 +539,75 @@
             </div>
         </div>
 
+        <!-- Active Companies & Ongoing Projects -->
+        <div class="card">
+            <h2 class="section-title">Active Companies & Ongoing Projects</h2>
+            <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
+            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
+                <h4 style="color: #1b5e20;">🏭 Narasapura Industrial Area, Bangalore</h4>
+                <p style="font-size: 14px; color: #555;">Direct company contract labour supply and machine operator deployment.</p>
+            </div>
+            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
+                <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd Project</h4>
+                <p style="font-size: 14px; color: #555;">Active deployment of technical fitters and assembly line operators.</p>
+            </div>
+            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
+                <h4 style="color: #1b5e20;">🔩 Unicast Autotech Pvt Ltd (SAHUWALA GROUP)</h4>
+                <p style="font-size: 14px; color: #555;">Dedicated manpower supply for foundry and heavy manufacturing units.</p>
+            </div>
+        </div>
+
+        <!-- Job Application & Joining Form with Receipt Copy -->
+        <div class="card" style="border: 2px solid #1565c0;">
+            <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Interested candidates can fill out this form to apply for job vacancies. After submission, an official application receipt will be generated instantly.</p>
+
+            <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Full Name:</label>
+                    <input type="text" id="pub-name" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Father's Name:</label>
+                    <input type="text" id="pub-father" placeholder="Enter father's name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Mobile Number:</label>
+                    <input type="tel" id="pub-phone" placeholder="Enter active mobile number" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Preferred Company / Location:</label>
+                    <select id="pub-company" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                        <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd</option>
+                        <option value="Unicast Autotech Pvt Ltd (SAHUWALA GROUP)">Unicast Autotech Pvt Ltd (SAHUWALA GROUP)</option>
+                        <option value="Narasapura Industrial Area, Bangalore">Narasapura Industrial Area, Bangalore</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Qualification / Trade:</label>
+                    <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <button type="submit" class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%;">Submit Application & Get Receipt Copy</button>
+            </form>
+
+            <div id="job-receipt-box" style="display: none; background: #e3f2fd; border: 2px dashed #1565c0; padding: 20px; border-radius: 6px; margin-top: 20px;">
+                <h3 style="color: #0d47a1; margin-bottom: 10px;">✓ Job Application Successful (Receipt Copy)</h3>
+                <p><strong>Application Reference ID:</strong> <span id="receipt-id" style="color: #b71c1c; font-weight: bold;">-</span></p>
+                <p><strong>Candidate Name:</strong> <span id="receipt-name">-</span></p>
+                <p><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
+                <p><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
+                <button class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; margin-top: 15px; width: auto; padding: 8px 15px; border-radius: 5px; cursor: pointer;" onclick="window.print()">Print / Save Receipt Copy</button>
+            </div>
+        </div>
+
+        <!-- Helpline & Support Desk -->
+        <div class="card" style="background: #e8f5e9; text-align: center;">
+            <h2 class="section-title">Helpline & Support Desk</h2>
+            <p style="margin-bottom: 10px; font-size: 15px;">Need urgent support regarding job vacancies or manpower supply? Contact us directly:</p>
+            <p style="font-size: 18px; font-weight: bold; color: #1b5e20; margin-bottom: 15px;">📞 Helpline / WhatsApp: +91 7337722338</p>
+            <a href="https://wa.me/917337722338?text=Hello%20Moni%20Enterprises,%20I%20need%20help." target="_blank" class="btn" style="display: inline-block; width: auto; background-color: #25d366; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">Chat on WhatsApp Now</a>
+        </div>
+
     </div>
 
     <div class="footer">
@@ -576,7 +645,7 @@
             var user = document.getElementById('admin-user').value.trim();
             var pass = document.getElementById('admin-pass').value.trim();
 
-            if (user === "admin" && pass === "admin123") {
+            if (user === "Manirul@me" && pass === "Moni@2026") {
                 document.getElementById('admin-auth').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 renderSupervisorTable();
@@ -781,7 +850,6 @@
             }
         }
 
-        // --- BULK PDF STRICT MATCHING: Name + Company (Moni Enterprises) + PF Number ---
         async function processAndSplitPDF() {
             var fileInput = document.getElementById('bulk-pdf-file');
             if (fileInput.files.length === 0) {
@@ -820,7 +888,6 @@
                         var companyMatch = pageText.includes(worker.company.toLowerCase());
                         var pfMatch = pageText.includes(worker.pfNumber.toLowerCase());
 
-                        // All 3 parameters must match strictly
                         if (nameMatch && companyMatch && pfMatch) {
                             matchedPfKey = pfKey;
                             break;
@@ -900,6 +967,38 @@
             document.getElementById('login-box').style.display = 'block';
         }
 
+        function submitPublicJobApplication(e) {
+            e.preventDefault();
+            var name = document.getElementById('pub-name').value.trim();
+            var father = document.getElementById('pub-father').value.trim();
+            var phone = document.getElementById('pub-phone').value.trim();
+            var company = document.getElementById('pub-company').value;
+            var qual = document.getElementById('pub-qual').value.trim();
+
+            var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
+            var pfNumber = "PF-" + Math.floor(10000 + Math.random() * 90000);
+
+            if(typeof workerDatabase !== 'undefined') {
+                workerDatabase[pfNumber] = {
+                    userid: appId,
+                    name: name,
+                    company: company,
+                    pfNumber: pfNumber,
+                    father: father,
+                    qual: qual,
+                    salary: "₹ 16,000.00 (Pending Review)",
+                    ot: "₹ 80 / Hour",
+                    status: "Active"
+                };
+            }
+
+            document.getElementById('receipt-id').innerText = appId + " (PF: " + pfNumber + ")";
+            document.getElementById('receipt-name').innerText = name;
+            document.getElementById('receipt-company').innerText = company;
+            document.getElementById('job-receipt-box').style.display = 'block';
+            document.getElementById('public-job-form').reset();
+        }
+
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
@@ -907,115 +1006,6 @@
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
         }
-        <!-- === New Addition: Active Company Projects, Job Application & Script === -->
-<div class="container">
-
-    <!-- Active Companies & Ongoing Projects -->
-    <div class="card">
-        <h2 class="section-title">Active Companies & Ongoing Projects</h2>
-        <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
-        <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-            <h4 style="color: #1b5e20;">🏭 Narasapura Industrial Area, Bangalore</h4>
-            <p style="font-size: 14px; color: #555;">Direct company contract labour supply and machine operator deployment.</p>
-        </div>
-        <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-            <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd Project</h4>
-            <p style="font-size: 14px; color: #555;">Active deployment of technical fitters and assembly line operators.</p>
-        </div>
-        <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-            <h4 style="color: #1b5e20;">🔩 Unicast Autotech Pvt Ltd (SAHUWALA GROUP)</h4>
-            <p style="font-size: 14px; color: #555;">Dedicated manpower supply for foundry and heavy manufacturing units.</p>
-        </div>
-    </div>
-
-    <!-- Job Application & Joining Form with Receipt Copy -->
-    <div class="card" style="border: 2px solid #1565c0;">
-        <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
-        <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Interested candidates can fill out this form to apply for job vacancies. After submission, an official application receipt will be generated instantly.</p>
-
-        <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Full Name:</label>
-                <input type="text" id="pub-name" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-            </div>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Father's Name:</label>
-                <input type="text" id="pub-father" placeholder="Enter father's name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-            </div>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Mobile Number:</label>
-                <input type="tel" id="pub-phone" placeholder="Enter active mobile number" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-            </div>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Preferred Company / Location:</label>
-                <select id="pub-company" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                    <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd</option>
-                    <option value="Unicast Autotech Pvt Ltd (SAHUWALA GROUP)">Unicast Autotech Pvt Ltd (SAHUWALA GROUP)</option>
-                    <option value="Narasapura Industrial Area, Bangalore">Narasapura Industrial Area, Bangalore</option>
-                </select>
-            </div>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Qualification / Trade:</label>
-                <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-            </div>
-            <button type="submit" class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%;">Submit Application & Get Receipt Copy</button>
-        </form>
-
-        <div id="job-receipt-box" style="display: none; background: #e3f2fd; border: 2px dashed #1565c0; padding: 20px; border-radius: 6px; margin-top: 20px;">
-            <h3 style="color: #0d47a1; margin-bottom: 10px;">✓ Job Application Successful (Receipt Copy)</h3>
-            <p><strong>Application Reference ID:</strong> <span id="receipt-id" style="color: #b71c1c; font-weight: bold;">-</span></p>
-            <p><strong>Candidate Name:</strong> <span id="receipt-name">-</span></p>
-            <p><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
-            <p><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
-            <button class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; margin-top: 15px; width: auto; padding: 8px 15px; border-radius: 5px; cursor: pointer;" onclick="window.print()">Print / Save Receipt Copy</button>
-        </div>
-    </div>
-
-    <!-- Helpline & Support Desk -->
-    <div class="card" style="background: #e8f5e9; text-align: center;">
-        <h2 class="section-title">Helpline & Support Desk</h2>
-        <p style="margin-bottom: 10px; font-size: 15px;">Need urgent support regarding job vacancies or manpower supply? Contact us directly:</p>
-        <p style="font-size: 18px; font-weight: bold; color: #1b5e20; margin-bottom: 15px;">📞 Helpline / WhatsApp: +91 7337722338</p>
-        <a href="https://wa.me/917337722338?text=Hello%20Moni%20Enterprises,%20I%20need%20help." target="_blank" class="btn" style="display: inline-block; width: auto; background-color: #25d366; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">Chat on WhatsApp Now</a>
-    </div>
-
-</div>
-
-<!-- Integrated JavaScript Code -->
-<script>
-function submitPublicJobApplication(e) {
-    e.preventDefault();
-    var name = document.getElementById('pub-name').value.trim();
-    var father = document.getElementById('pub-father').value.trim();
-    var phone = document.getElementById('pub-phone').value.trim();
-    var company = document.getElementById('pub-company').value;
-    var qual = document.getElementById('pub-qual').value.trim();
-
-    var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
-    var pfNumber = "PF-" + Math.floor(10000 + Math.random() * 90000);
-
-    if(typeof workerDatabase !== 'undefined') {
-        workerDatabase[pfNumber] = {
-            userid: appId,
-            name: name,
-            company: company,
-            pfNumber: pfNumber,
-            father: father,
-            qual: qual,
-            salary: "₹ 16,000.00 (Pending Review)",
-            ot: "₹ 80 / Hour",
-            status: "Active"
-        };
-    }
-
-    document.getElementById('receipt-id').innerText = appId + " (PF: " + pfNumber + ")";
-    document.getElementById('receipt-name').innerText = name;
-    document.getElementById('receipt-company').innerText = company;
-    document.getElementById('job-receipt-box').style.display = 'block';
-    document.getElementById('public-job-form').reset();
-}
-</script>
-<!-- === End of New Addition === -->
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
