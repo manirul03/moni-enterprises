@@ -26,6 +26,33 @@
             text-align: right;
             font-size: 14px;
         }
+        .top-navbar {
+            background-color: #1b5e20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            color: white;
+            flex-wrap: wrap;
+        }
+        .top-navbar .nav-links {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+        }
+        .top-navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .top-navbar .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
         .header {
             background-color: #1b5e20;
             color: #ffffff;
@@ -227,6 +254,29 @@
             padding: 20px;
             margin-top: 30px;
         }
+
+        /* Print only the receipt box styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #job-receipt-box, #job-receipt-box * {
+                visibility: visible;
+            }
+            #job-receipt-box {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                border: none !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+            }
+            #job-receipt-box button {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -236,32 +286,105 @@
         <div id="google_translate_element" style="display: inline-block;"></div>
     </div>
 
+    <!-- Top Navigation Bar -->
+    <div class="top-navbar">
+        <div style="font-weight: bold; font-size: 16px;">Moni Enterprises Portal</div>
+        <ul class="nav-links">
+            <li><a href="#home-section">Home</a></li>
+            <li><a href="#supervisor-section">Supervisor Login</a></li>
+            <li><a href="#employee-portal">Employee Login</a></li>
+            <li><a href="#admin-section">Admin Login</a></li>
+        </ul>
+    </div>
+
     <div class="header">
         <h1>Moni Enterprises</h1>
         <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
         
         <!-- Company & Office Photo Gallery Section -->
         <div class="company-gallery">
-            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300" alt="Office Building">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300" alt="Manpower Worksite">
-            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300" alt="Industrial Operations">
+            <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
+            <img src="logo.jpeg" alt="Manpower Worksite" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300'">
+            <img src="unicast-logo.jpeg" alt="Industrial Operations" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'">
         </div>
     </div>
 
     <div class="container">
 
+        <!-- Active Companies & Ongoing Projects (Home Section) -->
+        <div class="card" id="home-section">
+            <h2 class="section-title">Active Companies & Ongoing Projects</h2>
+            <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
+            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
+                <h4 style="color: #1b5e20;">🏭 Narasapura Industrial Area, Bangalore</h4>
+                <p style="font-size: 14px; color: #555;">Direct company contract labour supply and machine operator deployment.</p>
+            </div>
+            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
+                <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</h4>
+                <p style="font-size: 14px; color: #555;">Active deployment of technical fitters, assembly line operators, and contract staff.</p>
+            </div>
+        </div>
+
+        <!-- Job Application & Joining Form with Receipt Copy -->
+        <div class="card" style="border: 2px solid #1565c0;" id="job-application-section">
+            <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Interested candidates can fill out this form to apply for job vacancies. After submission, an official application receipt will be generated instantly.</p>
+
+            <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Full Name:</label>
+                    <input type="text" id="pub-name" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Father's Name:</label>
+                    <input type="text" id="pub-father" placeholder="Enter father's name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Mobile Number:</label>
+                    <input type="tel" id="pub-phone" placeholder="Enter active mobile number" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Preferred Company / Location:</label>
+                    <select id="pub-company" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                        <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</option>
+                        <option value="Narasapura Industrial Area, Bangalore">Narasapura Industrial Area, Bangalore (General)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Qualification / Trade:</label>
+                    <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                </div>
+                <button type="submit" class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%;">Submit Application & Get Receipt Copy</button>
+            </form>
+
+            <div id="job-receipt-box" style="display: none; background: #e3f2fd; border: 2px dashed #1565c0; padding: 25px; border-radius: 8px; margin-top: 20px;">
+                <div style="text-align: center; border-bottom: 1px solid #90caf9; padding-bottom: 10px; margin-bottom: 15px;">
+                    <h3 style="color: #0d47a1; margin-bottom: 5px;">MONI ENTERPRISES</h3>
+                    <p style="font-size: 13px; color: #555;">Manpower Supply Solutions | Official Receipt Copy</p>
+                </div>
+                <p style="margin-bottom: 8px;"><strong>Application Reference ID:</strong> <span id="receipt-id" style="color: #b71c1c; font-weight: bold;">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>Candidate Name:</strong> <span id="receipt-name">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>Father's Name:</strong> <span id="receipt-father">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>Mobile Number:</strong> <span id="receipt-phone">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>Qualification:</strong> <span id="receipt-qual">-</span></p>
+                <p style="margin-bottom: 15px;"><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
+                <button class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; width: auto; padding: 8px 20px; border-radius: 5px; cursor: pointer;" onclick="window.print()">Print / Save Receipt Copy</button>
+            </div>
+        </div>
+
         <!-- Master Admin Panel -->
-        <div class="card" style="border: 2px solid #b71c1c;">
+        <div class="card" style="border: 2px solid #b71c1c;" id="admin-section">
             <h2 class="section-title admin-title">Master Admin Panel (Proprietor Only)</h2>
             
             <div id="admin-auth">
                 <div class="input-group">
                     <label style="color: #b71c1c;">Admin Username:</label>
-                    <input type="text" id="admin-user" placeholder="Enter admin username (Manirul@me)">
+                    <input type="text" id="admin-user" placeholder="Enter admin username">
                 </div>
                 <div class="input-group">
                     <label style="color: #b71c1c;">Admin Password:</label>
-                    <input type="password" id="admin-pass" placeholder="Enter password (Moni@2026)">
+                    <input type="password" id="admin-pass" placeholder="Enter password">
                 </div>
                 <button class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
             </div>
@@ -470,7 +593,7 @@
         </div>
 
         <!-- Worker Portal (Login via PF Number) -->
-        <div class="card">
+        <div class="card" id="employee-portal">
             <h2 class="section-title">Worker Profile Portal</h2>
             
             <div id="login-box">
@@ -536,62 +659,6 @@
                 </div>
 
                 <button class="btn btn-blue" style="margin-top: 15px;" onclick="window.print()">Download Profile Card (PDF / Print)</button>
-            </div>
-        </div>
-
-        <!-- Active Companies & Ongoing Projects -->
-        <div class="card">
-            <h2 class="section-title">Active Companies & Ongoing Projects</h2>
-            <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
-            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-                <h4 style="color: #1b5e20;">🏭 Narasapura Industrial Area, Bangalore</h4>
-                <p style="font-size: 14px; color: #555;">Direct company contract labour supply and machine operator deployment.</p>
-            </div>
-            <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-                <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</h4>
-                <p style="font-size: 14px; color: #555;">Active deployment of technical fitters, assembly line operators, and contract staff.</p>
-            </div>
-        </div>
-
-        <!-- Job Application & Joining Form with Receipt Copy -->
-        <div class="card" style="border: 2px solid #1565c0;">
-            <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
-            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Interested candidates can fill out this form to apply for job vacancies. After submission, an official application receipt will be generated instantly.</p>
-
-            <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Full Name:</label>
-                    <input type="text" id="pub-name" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Father's Name:</label>
-                    <input type="text" id="pub-father" placeholder="Enter father's name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Mobile Number:</label>
-                    <input type="tel" id="pub-phone" placeholder="Enter active mobile number" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Preferred Company / Location:</label>
-                    <select id="pub-company" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                        <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</option>
-                        <option value="Narasapura Industrial Area, Bangalore">Narasapura Industrial Area, Bangalore (General)</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Qualification / Trade:</label>
-                    <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
-                </div>
-                <button type="submit" class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%;">Submit Application & Get Receipt Copy</button>
-            </form>
-
-            <div id="job-receipt-box" style="display: none; background: #e3f2fd; border: 2px dashed #1565c0; padding: 20px; border-radius: 6px; margin-top: 20px;">
-                <h3 style="color: #0d47a1; margin-bottom: 10px;">✓ Job Application Successful (Receipt Copy)</h3>
-                <p><strong>Application Reference ID:</strong> <span id="receipt-id" style="color: #b71c1c; font-weight: bold;">-</span></p>
-                <p><strong>Candidate Name:</strong> <span id="receipt-name">-</span></p>
-                <p><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
-                <p><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
-                <button class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; margin-top: 15px; width: auto; padding: 8px 15px; border-radius: 5px; cursor: pointer;" onclick="window.print()">Print / Save Receipt Copy</button>
             </div>
         </div>
 
@@ -987,10 +1054,15 @@
                 };
             }
 
-            document.getElementById('receipt-id').innerText = appId + " (PF: " + pfNumber + ")";
+            document.getElementById('receipt-id').innerText = appId;
             document.getElementById('receipt-name').innerText = name;
+            document.getElementById('receipt-father').innerText = father;
+            document.getElementById('receipt-phone').innerText = phone;
             document.getElementById('receipt-company').innerText = company;
+            document.getElementById('receipt-qual').innerText = qual;
+            
             document.getElementById('job-receipt-box').style.display = 'block';
+            document.getElementById('job-receipt-box').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('public-job-form').reset();
         }
 
