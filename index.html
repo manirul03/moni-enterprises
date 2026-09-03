@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moni Enterprises - Complete Management System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <!-- PDF Processing Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -25,6 +27,19 @@
             padding: 8px 15px;
             text-align: right;
             font-size: 14px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+        .language-header select {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 13px;
+            background: white;
+            color: #333;
+            cursor: pointer;
         }
         .top-navbar {
             background-color: #1b5e20;
@@ -127,21 +142,41 @@
             color: #c8e6c9;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
-        .company-gallery {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        .company-gallery img {
-            width: 140px;
-            height: 90px;
-            object-fit: cover;
+        
+        /* Single Slider Container Styles */
+        .slider-container {
+            width: 160px;
+            height: 100px;
+            margin: 15px auto 0 auto;
+            position: relative;
+            overflow: hidden;
             border-radius: 6px;
             border: 2px solid #c8e6c9;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: #fff;
         }
+        .slide-track {
+            display: flex;
+            width: 640px; /* 4 images * 160px */
+            animation: slideAnimation 12s infinite linear;
+        }
+        .slide-track img {
+            width: 160px;
+            height: 100px;
+            object-fit: cover;
+        }
+        @keyframes slideAnimation {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            25% { transform: translateX(-160px); }
+            45% { transform: translateX(-160px); }
+            50% { transform: translateX(-320px); }
+            70% { transform: translateX(-320px); }
+            75% { transform: translateX(-480px); }
+            95% { transform: translateX(-480px); }
+            100% { transform: translateX(0); }
+        }
+
         .container {
             max-width: 850px;
             margin: 20px auto;
@@ -351,9 +386,14 @@
 </head>
 <body>
 
+    <!-- Language Selection Header (Bengali, English, Hindi) -->
     <div class="language-header">
-        <span>Select Language: </span>
-        <div id="google_translate_element" style="display: inline-block;"></div>
+        <label for="language-select">ভাষা / Language / भाषा:</label>
+        <select id="language-select" onchange="changeLanguage(this.value)">
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="en" selected>English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+        </select>
     </div>
 
     <!-- Top Navigation Bar -->
@@ -380,11 +420,14 @@
         <h1>Moni Enterprises</h1>
         <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
         
-        <div class="company-gallery">
-            <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
-            <img src="logo.jpeg" alt="Manpower Logo" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300'">
-            <img src="unicast-logo.jpeg" alt="Unicast Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'">
-            <img src="ask-logo.jpeg" alt="ASK Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
+        <!-- Single Sliding Logo/Image Container -->
+        <div class="slider-container">
+            <div class="slide-track">
+                <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
+                <img src="logo.jpeg" alt="Manpower Logo" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300'">
+                <img src="unicast-logo.jpeg" alt="Unicast Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'">
+                <img src="ask-logo.jpeg" alt="ASK Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
+            </div>
         </div>
     </div>
 
@@ -913,6 +956,48 @@
         var currentLoggedInSup = "";
         var currentBase64Photo = "https://via.placeholder.com/110";
 
+        // Multi-language translation dictionary (Bengali, English, Hindi)
+        var translations = {
+            en: {
+                title: "Moni Enterprises - Complete Management System",
+                portalName: "Moni Enterprises Portal",
+                home: "Home",
+                login: "Login ▼",
+                empLogin: "👤 Employee Login",
+                supLogin: "📋 Supervisor Login",
+                adminLogin: "🔒 Admin Login",
+                companyTitle: "Active Companies & Ongoing Projects",
+                helplineTitle: "Helpline & Support Desk"
+            },
+            bn: {
+                title: "মনি এন্টারপ্রাইজ - সম্পূর্ণ ম্যানেজমেন্ট সিস্টেম",
+                portalName: "মনি এন্টারপ্রাইজ পোর্টাল",
+                home: "হোম",
+                login: "লগইন ▼",
+                empLogin: "👤 কর্মী লগইন",
+                supLogin: "📋 সুপারভাইজার লগইন",
+                adminLogin: "🔒 অ্যাডমিন লগইন",
+                companyTitle: "সক্রিয় কোম্পানি এবং চলমান প্রকল্পসমূহ",
+                helplineTitle: "হেল্পলাইন এবং সহায়তা ডেস্ক"
+            },
+            hi: {
+                title: "मोनी एंटरप्राइजेज - पूर्ण प्रबंधन प्रणाली",
+                portalName: "मोनी एंटरप्राइजेज पोर्टल",
+                home: "होम",
+                login: "लॉगिन ▼",
+                empLogin: "👤 कर्मचारी लॉगिन",
+                supLogin: "📋 सुपरवाइजर लॉगिन",
+                adminLogin: "🔒 व्यवस्थापक लॉगिन",
+                companyTitle: "सक्रिय कंपनियां और चल रही परियोजनाएं",
+                helplineTitle: "हेल्पलाइन और सहायता डेस्क"
+            }
+        };
+
+        function changeLanguage(lang) {
+            // Language selection handler function
+            console.log("Language changed to: " + lang);
+        }
+
         function validateNameInput(input) {
             input.value = input.value.replace(/[^A-Za-z\s]/g, '');
         }
@@ -1189,215 +1274,3 @@
 
             var workerSms = "Dear " + name + ", Welcome to Moni Enterprises. Your Worker ID: " + autoUserId + ", PF No: " + pf + " registered for " + company + ".";
             document.getElementById('worker-sms-text').innerText = workerSms + " (Sent to Mobile: " + phone + ")";
-
-            document.getElementById('gen-userid').innerText = autoUserId;
-            document.getElementById('gen-pf').innerText = pf;
-            document.getElementById('joining-form').reset();
-            document.getElementById('img-preview').style.display = 'none';
-            document.getElementById('preview-text').style.display = 'block';
-            document.getElementById('joining-success-box').style.display = 'block';
-        }
-
-        function searchWorkerToEdit() {
-            var q = document.getElementById('search-query').value.trim();
-            var foundKey = null;
-
-            for (var key in workerDatabase) {
-                if (key === q || workerDatabase[key].userid === q) {
-                    foundKey = key;
-                    break;
-                }
-            }
-
-            if (foundKey) {
-                var w = workerDatabase[foundKey];
-                document.getElementById('edit-target-pf').value = foundKey;
-                document.getElementById('edit-name').value = w.name;
-                document.getElementById('edit-father').value = w.father || '';
-                document.getElementById('edit-phone').value = w.phone || '';
-                document.getElementById('edit-idnum').value = w.idnum || '';
-                document.getElementById('edit-company').value = w.company || 'ASK Automotive Pvt. Ltd';
-                document.getElementById('edit-salary').value = w.salary;
-                document.getElementById('edit-ot').value = w.ot;
-                document.getElementById('edit-status').value = w.status || 'Active';
-
-                document.getElementById('edit-form').style.display = 'block';
-                document.getElementById('edit-success-box').style.display = 'none';
-            } else {
-                alert("Worker not found!");
-                document.getElementById('edit-form').style.display = 'none';
-            }
-        }
-
-        function saveEditedWorker(e) {
-            e.preventDefault();
-            var pf = document.getElementById('edit-target-pf').value;
-            var phone = document.getElementById('edit-phone').value.trim();
-            var idnum = document.getElementById('edit-idnum').value.trim();
-
-            if (phone.length !== 10 || idnum.length !== 12) {
-                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
-                return;
-            }
-
-            if(workerDatabase[pf]) {
-                workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
-                workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
-                workerDatabase[pf].phone = phone;
-                workerDatabase[pf].idnum = idnum;
-                workerDatabase[pf].company = document.getElementById('edit-company').value;
-                workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
-                workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
-                workerDatabase[pf].status = document.getElementById('edit-status').value;
-
-                document.getElementById('edit-form').style.display = 'none';
-                document.getElementById('edit-success-box').style.display = 'block';
-            }
-        }
-
-        async function processAndSplitPDF() {
-            var fileInput = document.getElementById('bulk-pdf-file');
-            if (!fileInput.files.length) {
-                alert("Please select a combined PDF file first!");
-                return;
-            }
-
-            var file = fileInput.files[0];
-            var box = document.getElementById('pdf-process-box');
-            var statusText = document.getElementById('pdf-status-text');
-            box.style.display = 'block';
-            statusText.innerText = "Loading PDF file...";
-
-            try {
-                var arrayBuffer = await file.arrayBuffer();
-                var loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-                var pdfDoc = await loadingTask.promise;
-                var numPages = pdfDoc.numPages;
-
-                statusText.innerText = "Scanning " + numPages + " pages and matching with workers...";
-
-                var matchedCount = 0;
-
-                for (var i = 1; i <= numPages; i++) {
-                    var page = await pdfDoc.getPage(i);
-                    var textContent = await page.getTextContent();
-                    var pageText = textContent.items.map(item => item.str).join(" ");
-
-                    var foundPf = null;
-                    for (var pf in workerDatabase) {
-                        if (pageText.includes(pf)) {
-                            foundPf = pf;
-                            break;
-                        }
-                    }
-
-                    if (foundPf) {
-                        var pdfLibDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                        var newPdfDoc = await PDFLib.PDFDocument.create();
-                        var [copiedPage] = await newPdfDoc.copyPages(pdfLibDoc, [i - 1]);
-                        newPdfDoc.addPage(copiedPage);
-                        var pdfBytes = await newPdfDoc.save();
-
-                        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        var blobUrl = URL.createObjectURL(blob);
-
-                        workerDatabase[foundPf].salarySlipPdf = blobUrl;
-                        matchedCount++;
-                    }
-                }
-
-                statusText.innerText = "✓ Processing Complete! Successfully matched and assigned " + matchedCount + " salary slips to respective workers.";
-                alert("Bulk PDF processed successfully! " + matchedCount + " payslips assigned.");
-
-            } catch (err) {
-                console.error(err);
-                statusText.innerText = "Error processing PDF file. Please check console.";
-            }
-        }
-
-        function loginWorker() {
-            var pfInput = document.getElementById('pf-num-input').value.trim();
-            
-            if (workerDatabase[pfInput]) {
-                var w = workerDatabase[pfInput];
-
-                if (w.status === "Inactive") {
-                    alert("ACCESS DENIED! Your account is inactive/blocked. Please contact Moni Enterprises HR.");
-                    return;
-                }
-
-                document.getElementById('login-box').style.display = 'none';
-                document.getElementById('worker-profile').style.display = 'block';
-
-                document.getElementById('worker-name').innerText = w.name;
-                document.getElementById('worker-pfno').innerText = "PF No: " + w.pfNumber;
-                document.getElementById('worker-userid').innerText = w.userid;
-                document.getElementById('worker-photo').src = w.photo;
-                document.getElementById('dash-company').innerText = w.company;
-                document.getElementById('dash-father').innerText = w.father || '-';
-                document.getElementById('dash-phone').innerText = w.phone || '-';
-                document.getElementById('dash-idnum').innerText = w.idnum || '-';
-                document.getElementById('dash-address').innerText = w.address || '-';
-                document.getElementById('dash-qual').innerText = w.qual || '-';
-                document.getElementById('dash-salary').innerText = w.salary;
-                document.getElementById('dash-ot').innerText = w.ot;
-
-                var badge = document.getElementById('dash-status-badge');
-                if(w.status === "Inactive") {
-                    badge.className = "status-badge status-inactive";
-                    badge.innerText = "Inactive / Left";
-                } else {
-                    badge.className = "status-badge status-active";
-                    badge.innerText = "Active Worker";
-                }
-
-                var payslipContainer = document.getElementById('payslip-container');
-                if (w.salarySlipPdf) {
-                    payslipContainer.innerHTML = '<a href="' + w.salarySlipPdf + '" target="_blank" class="btn btn-blue" style="display: inline-block; padding: 5px 12px; font-size: 13px; text-decoration: none;">📄 View / Download Payslip PDF</a>';
-                } else {
-                    payslipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
-                }
-
-            } else {
-                alert("PF Number not found in database!");
-            }
-        }
-
-        function logoutWorker() {
-            document.getElementById('login-box').style.display = 'block';
-            document.getElementById('worker-profile').style.display = 'none';
-            document.getElementById('pf-num-input').value = '';
-        }
-
-        function submitPublicJobApplication(e) {
-            e.preventDefault();
-            var name = document.getElementById('pub-name').value.trim();
-            var father = document.getElementById('pub-father').value.trim();
-            var phone = document.getElementById('pub-phone').value.trim();
-            var idnum = document.getElementById('pub-idnum').value.trim();
-            var company = document.getElementById('pub-company').value;
-            var qual = document.getElementById('pub-qual').value.trim();
-
-            if (phone.length !== 10 || idnum.length !== 12) {
-                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
-                return;
-            }
-
-            var refId = "ME-APP-" + Math.floor(100000 + Math.random() * 900000);
-
-            document.getElementById('receipt-id').innerText = refId;
-            document.getElementById('receipt-name').innerText = name;
-            document.getElementById('receipt-father').innerText = father;
-            document.getElementById('receipt-phone').innerText = phone;
-            document.getElementById('receipt-idnum').innerText = idnum;
-            document.getElementById('receipt-company').innerText = company;
-            document.getElementById('receipt-qual').innerText = qual;
-
-            document.getElementById('public-job-form').style.display = 'none';
-            document.getElementById('job-receipt-box').style.display = 'block';
-            alert("Application submitted successfully! Please save your receipt copy.");
-        }
-    </script>
-</body>
-</html>
-
