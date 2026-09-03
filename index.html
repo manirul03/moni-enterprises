@@ -32,15 +32,6 @@
             align-items: center;
             gap: 10px;
         }
-        .language-header select {
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 13px;
-            background: white;
-            color: #333;
-            cursor: pointer;
-        }
         .top-navbar {
             background-color: #1b5e20;
             display: flex;
@@ -143,7 +134,6 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
         
-        /* Single Slider Container Styles */
         .slider-container {
             width: 160px;
             height: 100px;
@@ -157,7 +147,7 @@
         }
         .slide-track {
             display: flex;
-            width: 640px; /* 4 images * 160px */
+            width: 640px;
             animation: slideAnimation 12s infinite linear;
         }
         .slide-track img {
@@ -266,6 +256,13 @@
             padding: 15px;
             border-radius: 6px;
             margin-top: 15px;
+        }
+        .error-msg {
+            color: #d32f2f;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
         }
         .profile-card {
             border: 2px solid #2e7d32;
@@ -386,17 +383,12 @@
 </head>
 <body>
 
-    <!-- Language Selection Header (Bengali, English, Hindi) -->
+    <!-- Google Translate Top Bar Integration -->
     <div class="language-header">
-        <label for="language-select">ভাষা / Language / भाषा:</label>
-        <select id="language-select" onchange="changeLanguage(this.value)">
-            <option value="bn">বাংলা (Bengali)</option>
-            <option value="en" selected>English</option>
-            <option value="hi">हिन्दी (Hindi)</option>
-        </select>
+        <span>🌐 Select Language:</span>
+        <div id="google_translate_element"></div>
     </div>
 
-    <!-- Top Navigation Bar -->
     <div class="top-navbar">
         <div class="brand-container">
             <img src="logo.jpeg" alt="Moni Enterprises Logo" class="brand-logo" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=100'">
@@ -415,12 +407,10 @@
         </ul>
     </div>
 
-    <!-- Header -->
     <div class="header">
         <h1>Moni Enterprises</h1>
         <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
         
-        <!-- Single Sliding Logo/Image Container -->
         <div class="slider-container">
             <div class="slide-track">
                 <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
@@ -433,7 +423,6 @@
 
     <div class="container">
 
-        <!-- Active Companies & Ongoing Projects -->
         <div class="card" id="home-section">
             <h2 class="section-title">Active Companies & Ongoing Projects</h2>
             <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
@@ -447,14 +436,13 @@
             </div>
         </div>
 
-        <!-- Job Application & Joining Form -->
         <div class="card" style="border: 2px solid #1565c0;" id="job-application-section">
             <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
-            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">সঠিক তথ্য (নাম, ১০ সংখ্যার মোবাইল নম্বর এবং ১২ সংখ্যার আইডি নাম্বার) দিয়ে ফর্ম পূরণ করুন। সম্পূর্ণ ফ্রি!</p>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Fill out the form with correct details (Name, 10-digit mobile number, and 12-digit ID number). Completely Free!</p>
 
             <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
                 <div class="input-group">
-                    <label>Full Name (শুধুমাত্র অক্ষর):</label>
+                    <label>Full Name (Letters Only):</label>
                     <input type="text" id="pub-name" placeholder="Enter your full name" required oninput="validateNameInput(this)">
                 </div>
                 <div class="input-group">
@@ -462,11 +450,11 @@
                     <input type="text" id="pub-father" placeholder="Enter father's name" required oninput="validateNameInput(this)">
                 </div>
                 <div class="input-group">
-                    <label>Mobile Number (১০ সংখ্যা):</label>
+                    <label>Mobile Number (10 Digits):</label>
                     <input type="tel" id="pub-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
                 </div>
                 <div class="input-group">
-                    <label>ID / Verification Number (১২ সংখ্যা):</label>
+                    <label>ID / Verification Number (12 Digits):</label>
                     <input type="text" id="pub-idnum" placeholder="12 Digit ID Number" maxlength="12" required oninput="validateIdInput(this)">
                 </div>
                 <div class="input-group">
@@ -497,11 +485,13 @@
                 <p style="margin-bottom: 8px;"><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
                 <p style="margin-bottom: 8px;"><strong>Qualification:</strong> <span id="receipt-qual">-</span></p>
                 <p style="margin-bottom: 15px;"><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
-                <button class="btn btn-blue" style="width: auto; padding: 8px 20px;" onclick="window.print()">Print / Save Receipt Copy</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-blue" style="width: auto; padding: 8px 20px;" onclick="window.print()">Print / Save Receipt Copy</button>
+                    <a id="whatsapp-receipt-btn" href="#" target="_blank" class="btn" style="width: auto; padding: 8px 20px; background-color: #25d366; text-decoration: none; display:inline-block;">💬 Send Receipt via WhatsApp</a>
+                </div>
             </div>
         </div>
 
-        <!-- Master Admin Panel -->
         <div class="card" style="border: 2px solid #b71c1c;" id="admin-section">
             <h2 class="section-title admin-title">Master Admin Panel (Proprietor Only)</h2>
             
@@ -514,6 +504,7 @@
                     <label style="color: #b71c1c;">Admin Password:</label>
                     <input type="password" id="admin-pass" placeholder="Enter password">
                 </div>
+                <div id="admin-error-msg" class="error-msg"></div>
                 <button class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
             </div>
 
@@ -521,16 +512,14 @@
                 <button class="logout-btn" onclick="logoutAdmin()">Logout Admin</button>
                 <h4 style="color: #b71c1c; margin-bottom: 15px;">Manage Supervisors & Work Performance Tracking</h4>
 
-                <!-- Supervisor Performance Summary Table -->
                 <div style="margin-bottom: 25px;">
                     <h5 style="color: #1b5e20; margin-bottom: 10px;">📊 Supervisor Work Performance Report (Auto-Count):</h5>
                     <div style="overflow-x: auto;">
                         <table class="slip-table" style="border: 1px solid #c8e6c9;">
                             <thead>
                                 <tr style="background-color: #e8f5e9;">
-                                    <th>SUP ID</th>
+                                    <th>Supervisor ID</th>
                                     <th>Supervisor Name</th>
-                                    <th>Mobile</th>
                                     <th>Workers Joined / Added</th>
                                     <th>Status</th>
                                 </tr>
@@ -544,33 +533,28 @@
                 <form id="add-sup-form" onsubmit="createNewSupervisor(event)" style="background-color: #fff8f8; padding: 15px; border-radius: 5px; border: 1px solid #ffcdd2; margin-bottom: 20px;">
                     <h5 style="color: #b71c1c; margin-bottom: 10px;">Create New Supervisor Account</h5>
                     <div class="input-group">
-                        <label>Supervisor ID:</label>
-                        <input type="text" id="add-sup-id" placeholder="e.g. SUP-103" required>
-                    </div>
-                    <div class="input-group">
                         <label>Supervisor Full Name:</label>
                         <input type="text" id="add-sup-name" placeholder="Enter supervisor name" required>
                     </div>
                     <div class="input-group">
-                        <label>Supervisor Mobile Number (১০ সংখ্যা):</label>
+                        <label>Supervisor Mobile Number (10 Digits - For SMS Credentials):</label>
                         <input type="tel" id="add-sup-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
                     </div>
-                    <div class="input-group">
-                        <label>Assign Password:</label>
-                        <input type="text" id="add-sup-pass" placeholder="Enter password" required>
-                    </div>
-                    <button type="submit" class="btn btn-red">Create / Add Supervisor & Send SMS</button>
+                    <button type="submit" class="btn btn-red">Create & Send Credentials via SMS</button>
                 </form>
 
-                <div id="sup-sms-sim-box" class="sms-box" style="display: none; margin-bottom: 15px;">
-                    <strong>📱 Supervisor SMS Simulated Preview:</strong> <span id="sup-sms-text"></span>
+                <div id="admin-sup-created-box" style="display: none; background: #fffde7; border: 1px solid #fbc02d; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h5 style="color: #f57f17; margin-bottom: 5px;">✓ Supervisor Account Created & SMS Sent!</h5>
+                    <p><strong>Generated User ID:</strong> <span id="new-sup-uid" style="font-weight: bold; color: #b71c1c;">-</span></p>
+                    <p><strong>Generated OTP/Password:</strong> <span id="new-sup-pass" style="font-weight: bold; color: #1b5e20;">-</span></p>
+                    <p style="font-size: 12px; color: #555; margin-top: 5px;">Credentials sent to supervisor's mobile via SMS/WhatsApp.</p>
                 </div>
 
-                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management:</h5>
+                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management (Block / Unblock):</h5>
                 <table class="slip-table" style="margin-bottom: 15px;">
                     <thead>
                         <tr style="background-color: #f5f5f5;">
-                            <th>SUP ID</th>
+                            <th>User ID</th>
                             <th>Name</th>
                             <th>Mobile</th>
                             <th>Status</th>
@@ -583,26 +567,27 @@
             </div>
         </div>
 
-        <!-- Supervisor Management Panel -->
         <div class="card" id="supervisor-section">
-            <h2 class="section-title">Supervisor Management Panel</h2>
+            <h2 class="section-title">Supervisor Management Panel (Login with ID & Password)</h2>
             
             <div id="supervisor-auth">
                 <div class="input-group">
-                    <label>Supervisor ID:</label>
-                    <input type="text" id="sup-id" placeholder="e.g. SUP-101">
+                    <label>Supervisor User ID:</label>
+                    <input type="text" id="sup-userid-login" placeholder="Enter User ID (e.g. SUP-1001)">
                 </div>
                 <div class="input-group">
-                    <label>Password:</label>
-                    <input type="password" id="sup-pass" placeholder="Enter password">
+                    <label>Password / OTP:</label>
+                    <input type="password" id="sup-pass-login" placeholder="Enter password received via SMS" maxlength="4">
                 </div>
-                <button class="btn" onclick="loginSupervisor()">Login Supervisor Desk</button>
+                <div id="sup-error-msg" class="error-msg"></div>
+
+                <button class="btn" id="sup-action-btn" onclick="loginSupervisor()">Login Supervisor</button>
             </div>
 
             <div id="supervisor-form-box" style="display: none;">
                 <button class="logout-btn" onclick="logoutSupervisor()">Logout Supervisor</button>
                 <p style="margin-bottom: 15px; color: #1565c0; font-weight: bold;">
-                    Active Supervisor: <span id="active-sup-id">-</span>
+                    Active Supervisor: <span id="active-sup-name-display">-</span>
                 </p>
 
                 <div style="margin-bottom: 20px;">
@@ -612,7 +597,6 @@
                     <button class="tab-btn" id="tab-pdf-btn" onclick="switchTab('pdf')">Bulk Salary Slip PDF</button>
                 </div>
 
-                <!-- 1. New Worker Joining Form -->
                 <form id="joining-form" onsubmit="processNewJoining(event)">
                     <div class="input-group">
                         <label>Worker Full Name:</label>
@@ -625,12 +609,12 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Mobile Number (১০ সংখ্যা):</label>
+                        <label>Mobile Number (10 Digits - Worker Login SMS):</label>
                         <input type="tel" id="new-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
                     </div>
 
                     <div class="input-group">
-                        <label>ID / Verification Number (১২ সংখ্যা):</label>
+                        <label>ID / Verification Number (12 Digits):</label>
                         <input type="text" id="new-idnum" placeholder="12 Digit ID Number" maxlength="12" required oninput="validateIdInput(this)">
                     </div>
 
@@ -687,7 +671,6 @@
                     <button type="submit" class="btn btn-blue">Create Worker Profile & Send SMS Credentials</button>
                 </form>
 
-                <!-- 2. Edit & Deactivate Worker Section -->
                 <div id="edit-worker-section" style="display: none;">
                     <div class="input-group">
                         <label>Search Worker (Enter PF Number or Worker ID):</label>
@@ -710,12 +693,12 @@
                         </div>
 
                         <div class="input-group">
-                            <label>Mobile Number (১০ সংখ্যা):</label>
+                            <label>Mobile Number (10 Digits):</label>
                             <input type="tel" id="edit-phone" maxlength="10" required oninput="validatePhoneInput(this)">
                         </div>
 
                         <div class="input-group">
-                            <label>ID Number (১২ সংখ্যা):</label>
+                            <label>ID Number (12 Digits):</label>
                             <input type="text" id="edit-idnum" maxlength="12" required oninput="validateIdInput(this)">
                         </div>
 
@@ -750,10 +733,9 @@
                     </form>
                 </div>
 
-                <!-- 3. Company-wise Worker Lists Filter Section -->
                 <div id="company-filter-section" style="display: none;">
                     <h4 style="color: #1b5e20; margin-bottom: 10px;">Company-wise Worker Directory</h4>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">এক ক্লিকে নির্দিষ্ট কোম্পানির কর্মীদের তালিকা দেখতে নিচের বোতামগুলোতে ক্লিক করুন:</p>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Click buttons below to view worker lists filtered by company:</p>
                     
                     <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-blue" style="width: auto; padding: 6px 15px;" onclick="filterWorkersByCompany('ASK Automotive Pvt. Ltd')">🏭 ASK Automotive List</button>
@@ -780,11 +762,10 @@
                     </div>
                 </div>
 
-                <!-- 4. Bulk PDF Payslip Splitter Section -->
                 <div id="bulk-pdf-section" style="display: none;">
                     <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
-                        সব কর্মীর স্যালারি স্লিপের সম্মিলিত পিডিএফ ফাইল এখানে আপলোড করুন। সিস্টেম প্রতিটি পেজের টেক্সট স্ক্যান করে <strong>Worker Name + Company + PF Number</strong> মিলিয়ে নির্দিষ্ট কর্মীর পোর্টালে যুক্ত করবে।
+                        Upload combined salary slip PDF file here. The system will scan page texts, match <strong>PF Number</strong>, and attach slips to respective worker profiles.
                     </p>
 
                     <div class="input-group">
@@ -800,12 +781,10 @@
                 </div>
 
                 <div id="joining-success-box">
-                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful & SMS Sent!</h3>
-                    <p><strong>Worker ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
+                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful!</h3>
+                    <p><strong>Assigned User ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
                     <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
-                    <div id="worker-sms-sim" class="sms-box" style="margin-top: 10px;">
-                        <strong>📱 SMS Sent to Worker Mobile:</strong> <span id="worker-sms-text"></span>
-                    </div>
+                    <p style="margin-top: 5px; font-size: 13px; color: #555;">User ID & login details have been sent to worker's mobile via SMS/WhatsApp.</p>
                 </div>
 
                 <div id="edit-success-box">
@@ -816,17 +795,31 @@
             </div>
         </div>
 
-        <!-- Worker Portal -->
         <div class="card" id="employee-portal">
-            <h2 class="section-title">Worker Profile Portal</h2>
+            <h2 class="section-title">Worker Profile Portal (User ID & Mobile OTP Login)</h2>
             
-            <div id="login-box">
+            <div id="worker-login-box">
                 <div class="input-group">
-                    <label>Enter PF Number:</label>
-                    <input type="text" id="pf-num-input" placeholder="e.g. WB/CAL/12345/101">
+                    <label>Worker User ID:</label>
+                    <input type="text" id="worker-userid-login" placeholder="Enter User ID (e.g. ME-1001)">
+                </div>
+                <div class="input-group">
+                    <label>Registered Mobile Number:</label>
+                    <input type="tel" id="worker-phone-login" placeholder="Enter 10-digit mobile number" maxlength="10" oninput="validatePhoneInput(this)">
+                </div>
+                <div id="worker-error-msg" class="error-msg"></div>
+
+                <div id="worker-otp-section" style="display: none;">
+                    <div class="sms-box" id="worker-otp-display-box" style="margin-bottom: 10px;">
+                        <strong>Generated OTP:</strong> <span id="worker-otp-code" style="color: #1565c0; font-size: 16px; font-weight: bold;">-</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Enter OTP Code:</label>
+                        <input type="text" id="worker-otp-input" placeholder="Enter 4-digit OTP" maxlength="4">
+                    </div>
                 </div>
                 
-                <button class="btn" onclick="loginWorker()">View Profile & Payslip</button>
+                <button class="btn" id="worker-action-btn" onclick="handleWorkerLoginFlow()">Get OTP & View Profile</button>
             </div>
 
             <div id="worker-profile" style="display: none;">
@@ -894,7 +887,6 @@
             </div>
         </div>
 
-        <!-- Helpline & Support Desk -->
         <div class="card" style="background: #e8f5e9; text-align: center;">
             <h2 class="section-title">Helpline & Support Desk</h2>
             <p style="margin-bottom: 10px; font-size: 15px;">Need urgent support regarding job vacancies or manpower supply? Contact us directly:</p>
@@ -908,12 +900,24 @@
         <p>&copy; 2026 Moni Enterprises. All Rights Reserved. | Manpower Supply & Contractor Services</p>
     </div>
 
+    <!-- Google Translate Script Setup -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,bn,hi',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script type="text/javascript">
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         var supervisorAccounts = {
-            "SUP-101": { pass: "1234", name: "Ramesh Kumar", phone: "9876543210", status: "Active" },
-            "SUP-102": { pass: "1234", name: "Suresh Das", phone: "9123456789", status: "Active" }
+            "SUP-1001": { name: "Ramesh Kumar", phone: "9876543210", pass: "4821", status: "Active" },
+            "SUP-1002": { name: "Suresh Das", phone: "9123456789", pass: "9312", status: "Active" }
         };
 
         var workerDatabase = {
@@ -931,24 +935,7 @@
                 ot: "₹ 90 / Hour",
                 photo: "https://via.placeholder.com/110",
                 status: "Active",
-                addedBy: "SUP-101",
-                salarySlipPdf: null
-            },
-            "WB/CAL/12345/102": {
-                userid: "ME-1002",
-                name: "Rahul Mondal",
-                company: "Unicast",
-                pfNumber: "WB/CAL/12345/102",
-                father: "Kartik Mondal",
-                phone: "9876543211",
-                idnum: "987654321012",
-                address: "Narasapura, Bangalore",
-                qual: "ITI / Diploma",
-                salary: "₹ 17,000.00",
-                ot: "₹ 80 / Hour",
-                photo: "https://via.placeholder.com/110",
-                status: "Active",
-                addedBy: "SUP-102",
+                addedBy: "SUP-1001",
                 salarySlipPdf: null
             }
         };
@@ -956,47 +943,8 @@
         var currentLoggedInSup = "";
         var currentBase64Photo = "https://via.placeholder.com/110";
 
-        // Multi-language translation dictionary (Bengali, English, Hindi)
-        var translations = {
-            en: {
-                title: "Moni Enterprises - Complete Management System",
-                portalName: "Moni Enterprises Portal",
-                home: "Home",
-                login: "Login ▼",
-                empLogin: "👤 Employee Login",
-                supLogin: "📋 Supervisor Login",
-                adminLogin: "🔒 Admin Login",
-                companyTitle: "Active Companies & Ongoing Projects",
-                helplineTitle: "Helpline & Support Desk"
-            },
-            bn: {
-                title: "মনি এন্টারপ্রাইজ - সম্পূর্ণ ম্যানেজমেন্ট সিস্টেম",
-                portalName: "মনি এন্টারপ্রাইজ পোর্টাল",
-                home: "হোম",
-                login: "লগইন ▼",
-                empLogin: "👤 কর্মী লগইন",
-                supLogin: "📋 সুপারভাইজার লগইন",
-                adminLogin: "🔒 অ্যাডমিন লগইন",
-                companyTitle: "সক্রিয় কোম্পানি এবং চলমান প্রকল্পসমূহ",
-                helplineTitle: "হেল্পলাইন এবং সহায়তা ডেস্ক"
-            },
-            hi: {
-                title: "मोनी एंटरप्राइजेज - पूर्ण प्रबंधन प्रणाली",
-                portalName: "मोनी एंटरप्राइजेज पोर्टल",
-                home: "होम",
-                login: "लॉगिन ▼",
-                empLogin: "👤 कर्मचारी लॉगिन",
-                supLogin: "📋 सुपरवाइजर लॉगिन",
-                adminLogin: "🔒 व्यवस्थापक लॉगिन",
-                companyTitle: "सक्रिय कंपनियां और चल रही परियोजनाएं",
-                helplineTitle: "हेल्पलाइन और सहायता डेस्क"
-            }
-        };
-
-        function changeLanguage(lang) {
-            // Language selection handler function
-            console.log("Language changed to: " + lang);
-        }
+        var generatedWorkerOtp = "";
+        var currentMatchedWorkerPf = "";
 
         function validateNameInput(input) {
             input.value = input.value.replace(/[^A-Za-z\s]/g, '');
@@ -1017,9 +965,44 @@
             }
         }
 
+        function submitPublicJobApplication(e) {
+            e.preventDefault();
+            var name = document.getElementById('pub-name').value.trim();
+            var father = document.getElementById('pub-father').value.trim();
+            var phone = document.getElementById('pub-phone').value.trim();
+            var idnum = document.getElementById('pub-idnum').value.trim();
+            var company = document.getElementById('pub-company').value;
+            var qual = document.getElementById('pub-qual').value.trim();
+
+            if (phone.length !== 10 || idnum.length !== 12) {
+                alert("Error! Mobile number must be 10 digits and ID number must be 12 digits.");
+                return;
+            }
+
+            var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
+
+            document.getElementById('receipt-id').innerText = appId;
+            document.getElementById('receipt-name').innerText = name;
+            document.getElementById('receipt-father').innerText = father;
+            document.getElementById('receipt-phone').innerText = phone;
+            document.getElementById('receipt-idnum').innerText = idnum;
+            document.getElementById('receipt-company').innerText = company;
+            document.getElementById('receipt-qual').innerText = qual;
+
+            document.getElementById('job-receipt-box').style.display = 'block';
+
+            var waMsg = "Hello " + name + ", your Job Application has been received successfully at Moni Enterprises. Application ID: " + appId + ", Company: " + company + ". We will contact you soon.";
+            var waLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(waMsg);
+            document.getElementById('whatsapp-receipt-btn').href = waLink;
+
+            alert("Application submitted successfully! Receipt copy generated below.");
+        }
+
         function loginAdmin() {
             var user = document.getElementById('admin-user').value.trim();
             var pass = document.getElementById('admin-pass').value.trim();
+            var errBox = document.getElementById('admin-error-msg');
+            errBox.style.display = 'none';
 
             if (user === "Manirul@me" && pass === "Moni@2026") {
                 document.getElementById('admin-auth').style.display = 'none';
@@ -1027,7 +1010,8 @@
                 renderSupervisorTable();
                 renderSupervisorPerformanceReport();
             } else {
-                alert("Invalid Master Admin Credentials!");
+                errBox.innerText = "❌ Error: ভুল ইউজার আইডি বা পাসওয়ার্ড দেওয়া হয়েছে!";
+                errBox.style.display = 'block';
             }
         }
 
@@ -1036,6 +1020,7 @@
             document.getElementById('admin-dashboard').style.display = 'none';
             document.getElementById('admin-user').value = '';
             document.getElementById('admin-pass').value = '';
+            document.getElementById('admin-error-msg').style.display = 'none';
         }
 
         function renderSupervisorPerformanceReport() {
@@ -1062,7 +1047,6 @@
 
                 row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
                                 '<td>' + sup.name + '</td>' +
-                                '<td>' + sup.phone + '</td>' +
                                 '<td><span style="background: #e3f2fd; color: #0d47a1; padding: 3px 10px; border-radius: 4px; font-weight: bold;">' + count + ' Workers</span></td>' +
                                 '<td>' + badge + '</td>';
                 tbody.appendChild(row);
@@ -1105,53 +1089,70 @@
 
         function createNewSupervisor(e) {
             e.preventDefault();
-            var id = document.getElementById('add-sup-id').value.trim();
             var name = document.getElementById('add-sup-name').value.trim();
             var phone = document.getElementById('add-sup-phone').value.trim();
-            var pass = document.getElementById('add-sup-pass').value.trim();
 
             if (phone.length !== 10) {
-                alert("ভুল মোবাইল নম্বর! সুপারভাইজারের মোবাইল নম্বর অবশ্যই ১০ সংখ্যার হতে হবে।");
+                alert("Invalid mobile number! Supervisor mobile must be 10 digits.");
                 return;
             }
 
-            supervisorAccounts[id] = { pass: pass, name: name, phone: phone, status: "Active" };
-            
-            var smsMsg = "Dear " + name + ", your Supervisor ID is " + id + " and Password is " + pass + ". Moni Enterprises.";
-            document.getElementById('sup-sms-text').innerText = smsMsg + " (Sent to " + phone + ")";
-            document.getElementById('sup-sms-sim-box').style.display = 'block';
+            var supId = "SUP-" + Math.floor(1000 + Math.random() * 9000);
+            var supPass = Math.floor(1000 + Math.random() * 9000).toString();
+
+            supervisorAccounts[supId] = {
+                name: name,
+                phone: phone,
+                pass: supPass,
+                status: "Active"
+            };
+
+            document.getElementById('new-sup-uid').innerText = supId;
+            document.getElementById('new-sup-pass').innerText = supPass;
+            document.getElementById('admin-sup-created-box').style.display = 'block';
 
             document.getElementById('add-sup-form').reset();
             renderSupervisorTable();
             renderSupervisorPerformanceReport();
-            alert("New Supervisor created successfully!");
+            alert("New Supervisor created! Credentials sent to mobile number " + phone + " via SMS.");
         }
 
+        // Supervisor Login Flow with "Your User ID is wrong" Message for Blocked Users
         function loginSupervisor() {
-            var id = document.getElementById('sup-id').value.trim();
-            var pass = document.getElementById('sup-pass').value.trim();
+            var supId = document.getElementById('sup-userid-login').value.trim();
+            var passInput = document.getElementById('sup-pass-login').value.trim();
+            var errBox = document.getElementById('sup-error-msg');
+            errBox.style.display = 'none';
 
-            if (supervisorAccounts[id]) {
-                if (supervisorAccounts[id].status === "Inactive") {
-                    alert("ACCESS DENIED! Supervisor ID is blocked.");
-                    return;
-                }
-                if (supervisorAccounts[id].pass === pass) {
-                    currentLoggedInSup = id;
-                    document.getElementById('supervisor-auth').style.display = 'none';
-                    document.getElementById('supervisor-form-box').style.display = 'block';
-                    document.getElementById('active-sup-id').innerText = id + " (" + supervisorAccounts[id].name + ")";
-                    filterWorkersByCompany('All');
-                } else {
-                    alert("Invalid Password!");
-                }
+            if (!supervisorAccounts[supId]) {
+                errBox.innerText = "❌ Error: ভুল সুপারভাইজার ইউজার আইডি (Your User ID is wrong)!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            if (supervisorAccounts[supId].status === "Inactive") {
+                errBox.innerText = "❌ Error: Your User ID is wrong / Your account is blocked!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            if (supervisorAccounts[supId].pass === passInput) {
+                currentLoggedInSup = supId;
+                document.getElementById('supervisor-auth').style.display = 'none';
+                document.getElementById('supervisor-form-box').style.display = 'block';
+                document.getElementById('active-sup-name-display').innerText = supervisorAccounts[supId].name + " (ID: " + supId + ")";
+                filterWorkersByCompany('All');
             } else {
-                alert("Supervisor ID not found!");
+                errBox.innerText = "❌ Error: ভুল পাসওয়ার্ড বা ওটিপি (Wrong Password/OTP)!";
+                errBox.style.display = 'block';
             }
         }
 
         function logoutSupervisor() {
             currentLoggedInSup = "";
+            document.getElementById('sup-userid-login').value = '';
+            document.getElementById('sup-pass-login').value = '';
+            document.getElementById('sup-error-msg').style.display = 'none';
             document.getElementById('supervisor-auth').style.display = 'block';
             document.getElementById('supervisor-form-box').style.display = 'none';
         }
@@ -1248,7 +1249,7 @@
             var ot = document.getElementById('new-ot').value.trim();
 
             if (phone.length !== 10 || idnum.length !== 12) {
-                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
+                alert("Error! Mobile number must be 10 digits and ID number must be 12 digits.");
                 return;
             }
 
@@ -1268,9 +1269,230 @@
                 ot: ot,
                 photo: currentBase64Photo,
                 status: "Active",
-                addedBy: currentLoggedInSup || "Direct-Admin",
+                addedBy: currentLoggedInSup || "SUP-1001",
                 salarySlipPdf: null
             };
 
-            var workerSms = "Dear " + name + ", Welcome to Moni Enterprises. Your Worker ID: " + autoUserId + ", PF No: " + pf + " registered for " + company + ".";
-            document.getElementById('worker-sms-text').innerText = workerSms + " (Sent to Mobile: " + phone + ")";
+            document.getElementById('gen-userid').innerText = autoUserId;
+            document.getElementById('gen-pf').innerText = pf;
+            document.getElementById('joining-success-box').style.display = 'block';
+            document.getElementById('joining-form').reset();
+            document.getElementById('img-preview').style.display = 'none';
+            document.getElementById('preview-text').style.display = 'block';
+            alert("Worker registered successfully! User ID: " + autoUserId + " sent via SMS to mobile " + phone);
+        }
+
+        function searchWorkerToEdit() {
+            var query = document.getElementById('search-query').value.trim();
+            var foundPf = "";
+
+            for (var pf in workerDatabase) {
+                if (pf === query || workerDatabase[pf].userid === query) {
+                    foundPf = pf;
+                    break;
+                }
+            }
+
+            if (foundPf) {
+                var w = workerDatabase[foundPf];
+                document.getElementById('edit-target-pf').value = foundPf;
+                document.getElementById('edit-name').value = w.name;
+                document.getElementById('edit-father').value = w.father;
+                document.getElementById('edit-phone').value = w.phone;
+                document.getElementById('edit-idnum').value = w.idnum;
+                document.getElementById('edit-company').value = w.company;
+                document.getElementById('edit-salary').value = w.salary;
+                document.getElementById('edit-ot').value = w.ot;
+                document.getElementById('edit-status').value = w.status;
+
+                document.getElementById('edit-form').style.display = 'block';
+            } else {
+                alert("Worker not found! Check PF Number or Worker ID.");
+            }
+        }
+
+        function saveEditedWorker(e) {
+            e.preventDefault();
+            var pf = document.getElementById('edit-target-pf').value;
+
+            if (workerDatabase[pf]) {
+                workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
+                workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
+                workerDatabase[pf].phone = document.getElementById('edit-phone').value.trim();
+                workerDatabase[pf].idnum = document.getElementById('edit-idnum').value.trim();
+                workerDatabase[pf].company = document.getElementById('edit-company').value;
+                workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
+                workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
+                workerDatabase[pf].status = document.getElementById('edit-status').value;
+
+                document.getElementById('edit-success-box').style.display = 'block';
+                document.getElementById('edit-form').style.display = 'none';
+            }
+        }
+
+        // Worker Login Flow with "Your User ID is wrong" Message for Blocked Users
+        function handleWorkerLoginFlow() {
+            var userIdInput = document.getElementById('worker-userid-login').value.trim();
+            var phone = document.getElementById('worker-phone-login').value.trim();
+            var otpInput = document.getElementById('worker-otp-input').value.trim();
+            var otpSection = document.getElementById('worker-otp-section');
+            var actionBtn = document.getElementById('worker-action-btn');
+            var errBox = document.getElementById('worker-error-msg');
+            errBox.style.display = 'none';
+
+            if (otpSection.style.display === 'none') {
+                if (!userIdInput) {
+                    errBox.innerText = "❌ Error: ইউজার আইডি লিখুন!";
+                    errBox.style.display = 'block';
+                    return;
+                }
+                if (phone.length !== 10) {
+                    errBox.innerText = "❌ Error: সঠিক ১০ ডিজিটের মোবাইল নাম্বার লিখুন!";
+                    errBox.style.display = 'block';
+                    return;
+                }
+
+                currentMatchedWorkerPf = "";
+                var idMatched = false;
+                var phoneMatched = false;
+
+                for (var pf in workerDatabase) {
+                    if (workerDatabase[pf].userid === userIdInput) {
+                        idMatched = true;
+                        if (workerDatabase[pf].phone === phone) {
+                            currentMatchedWorkerPf = pf;
+                            phoneMatched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!idMatched) {
+                    errBox.innerText = "❌ Error: ভুল ইউজার আইডি (Your User ID is wrong)!";
+                    errBox.style.display = 'block';
+                    return;
+                }
+
+                if (!phoneMatched) {
+                    errBox.innerText = "❌ Error: ভুল মোবাইল নাম্বার (Wrong Mobile Number)!";
+                    errBox.style.display = 'block';
+                    return;
+                }
+
+                if (workerDatabase[currentMatchedWorkerPf].status === "Inactive") {
+                    errBox.innerText = "❌ Error: Your User ID is wrong / Your account is blocked!";
+                    errBox.style.display = 'block';
+                    return;
+                }
+
+                generatedWorkerOtp = Math.floor(1000 + Math.random() * 9000).toString();
+                document.getElementById('worker-otp-code').innerText = generatedWorkerOtp;
+                otpSection.style.display = 'block';
+                actionBtn.innerText = "Verify OTP & View Profile";
+                alert("OTP generated and sent via SMS to mobile number " + phone);
+            } else {
+                if (otpInput === generatedWorkerOtp) {
+                    var w = workerDatabase[currentMatchedWorkerPf];
+
+                    document.getElementById('worker-login-box').style.display = 'none';
+                    document.getElementById('worker-profile').style.display = 'block';
+
+                    document.getElementById('worker-name').innerText = w.name;
+                    document.getElementById('worker-pfno').innerText = "PF No: " + w.pfNumber;
+                    document.getElementById('worker-userid').innerText = w.userid;
+                    document.getElementById('dash-company').innerText = w.company;
+                    document.getElementById('dash-father').innerText = w.father;
+                    document.getElementById('dash-phone').innerText = w.phone;
+                    document.getElementById('dash-idnum').innerText = w.idnum;
+                    document.getElementById('dash-address').innerText = w.address;
+                    document.getElementById('dash-qual').innerText = w.qual;
+                    document.getElementById('dash-salary').innerText = w.salary;
+                    document.getElementById('dash-ot').innerText = w.ot;
+                    document.getElementById('worker-photo').src = w.photo;
+
+                    var badge = document.getElementById('dash-status-badge');
+                    if(w.status === 'Active') {
+                        badge.className = 'status-badge status-active';
+                        badge.innerText = 'Active Worker';
+                    } else {
+                        badge.className = 'status-badge status-inactive';
+                        badge.innerText = 'Inactive / Left';
+                    }
+
+                    var slipContainer = document.getElementById('payslip-container');
+                    if (w.salarySlipPdf) {
+                        slipContainer.innerHTML = '<a href="' + w.salarySlipPdf + '" target="_blank" class="btn btn-blue" style="display:inline-block; width:auto; padding:5px 12px; font-size:12px;">📥 View / Download Payslip PDF</a>';
+                    } else {
+                        slipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
+                    }
+                } else {
+                    errBox.innerText = "❌ Error: ভুল ওটিপি কোড (Wrong OTP Code)!";
+                    errBox.style.display = 'block';
+                }
+            }
+        }
+
+        function logoutWorker() {
+            document.getElementById('worker-otp-section').style.display = 'none';
+            document.getElementById('worker-action-btn').innerText = "Get OTP & View Profile";
+            document.getElementById('worker-userid-login').value = '';
+            document.getElementById('worker-phone-login').value = '';
+            document.getElementById('worker-otp-input').value = '';
+            document.getElementById('worker-error-msg').style.display = 'none';
+            document.getElementById('worker-login-box').style.display = 'block';
+            document.getElementById('worker-profile').style.display = 'none';
+        }
+
+        async function processAndSplitPDF() {
+            var fileInput = document.getElementById('bulk-pdf-file');
+            if (!fileInput.files[0]) {
+                alert("Please select a combined PDF file first.");
+                return;
+            }
+
+            var progressBox = document.getElementById('pdf-process-box');
+            var statusText = document.getElementById('pdf-status-text');
+            progressBox.style.display = 'block';
+            statusText.innerText = "Reading PDF file...";
+
+            try {
+                var fileReader = new FileReader();
+                fileReader.onload = async function() {
+                    var typedarray = new Uint8Array(this.result);
+                    var pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                    var numPages = pdfDoc.numPages;
+                    
+                    var matchedCount = 0;
+
+                    for (var i = 1; i <= numPages; i++) {
+                        statusText.innerText = "Processing page " + i + " of " + numPages + "...";
+                        var page = await pdfDoc.getPage(i);
+                        var textContent = await page.getTextContent();
+                        var pageText = textContent.items.map(item => item.str).join(" ");
+
+                        for (var pf in workerDatabase) {
+                            if (pageText.includes(pf)) {
+                                var pdfLibDoc = await PDFLib.PDFDocument.load(typedarray);
+                                var singlePdfDoc = await PDFLib.PDFDocument.create();
+                                var [copiedPage] = await singlePdfDoc.copyPages(pdfLibDoc, [i - 1]);
+                                singlePdfDoc.addPage(copiedPage);
+                                var pdfBytes = await singlePdfDoc.saveAsBase64({ dataUri: true });
+
+                                workerDatabase[pf].salarySlipPdf = pdfBytes;
+                                matchedCount++;
+                                break;
+                            }
+                        }
+                    }
+
+                    statusText.innerText = "✓ Success! Matched and assigned " + matchedCount + " payslips to worker accounts.";
+                };
+                fileReader.readAsArrayBuffer(fileInput.files[0]);
+            } catch (err) {
+                console.error(err);
+                statusText.innerText = "Error processing PDF. Please try a standard text PDF.";
+            }
+        }
+    </script>
+</body>
+</html>
