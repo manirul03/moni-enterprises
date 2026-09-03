@@ -1257,122 +1257,116 @@
 
         async function processAndSplitPDF() {
             var fileInput = document.getElementById('bulk-pdf-file');
-            if (fileInput.files.length === 0) {
-                alert("Please select a PDF file first!");
+            if (!fileInput.files.length) {
+                alert("Please select a combined PDF file first!");
                 return;
             }
 
-            var statusBox = document.getElementById('pdf-process-box');
-            var statusText = document.getElementById('pdf-status-text');
-            statusBox.style.display = 'block';
-            statusText.innerText = "Scanning PDF pages...";
-
             var file = fileInput.files[0];
-            var arrayBuffer = await file.arrayBuffer();
+            var box = document.getElementById('pdf-process-box');
+            var statusText = document.getElementById('pdf-status-text');
+            box.style.display = 'block';
+            statusText.innerText = "Loading PDF file...";
 
             try {
-                var pdfDocObj = await PDFLib.PDFDocument.load(arrayBuffer);
-                var pdfJsDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                var totalPages = pdfJsDoc.numPages;
+                var arrayBuffer = await file.arrayBuffer();
+                var loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                var pdfDoc = await loadingTask.promise;
+                var numPages = pdfDoc.numPages;
 
-                var assignedCount = 0;
+                statusText.innerText = "Scanning " + numPages + " pages and matching with workers...";
 
-                for (let i = 1; i <= totalPages; i++) {
-                    statusText.innerText = "Analyzing Page " + i + " of " + totalPages + "...";
-                    
-                    var page = await pdfJsDoc.getPage(i);
+                var matchedCount = 0;
+
+                for (var i = 1; i <= numPages; i++) {
+                    var page = await pdfDoc.getPage(i);
                     var textContent = await page.getTextContent();
-                    var pageText = textContent.items.map(item => item.str).join(" ").toLowerCase();
+                    var pageText = textContent.items.map(item => item.str).join(" ");
 
-                    var matchedPfKey = null;
-
-                    for (var pfKey in workerDatabase) {
-                        var worker = workerDatabase[pfKey];
-                        
-                        var nameMatch = pageText.includes(worker.name.toLowerCase());
-                        var companyMatch = pageText.includes(worker.company.toLowerCase());
-                        var pfMatch = pageText.includes(worker.pfNumber.toLowerCase());
-
-                        if (nameMatch && companyMatch && pfMatch) {
-                            matchedPfKey = pfKey;
+                    var foundPf = null;
+                    for (var pf in workerDatabase) {
+                        if (pageText.includes(pf)) {
+                            foundPf = pf;
                             break;
                         }
                     }
 
-                    if (matchedPfKey) {
-                        var singleDoc = await PDFLib.PDFDocument.create();
-                        var [copiedPage] = await singleDoc.copyPages(pdfDocObj, [i - 1]);
-                        singleDoc.addPage(copiedPage);
+                    if (foundPf) {
+                        var pdfLibDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                        var newPdfDoc = await PDFLib.PDFDocument.create();
+                        var [copiedPage] = await newPdfDoc.copyPages(pdfLibDoc, [i - 1]);
+                        newPdfDoc.addPage(copiedPage);
+                        var pdfBytes = await newPdfDoc.save();
 
-                        var pdfDataUri = await singleDoc.saveAsBase64({ dataUri: true });
-                        workerDatabase[matchedPfKey].salarySlipPdf = pdfDataUri;
-                        assignedCount++;
+                        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        var blobUrl = URL.createObjectURL(blob);
+
+                        workerDatabase[foundPf].salarySlipPdf = blobUrl;
+                        matchedCount++;
                     }
                 }
 
-                if(assignedCount > 0) {
-                    statusText.innerText = "✓ Success! " + assignedCount + " salary slip(s) matched and assigned to workers.";
-                } else {
-                    statusText.innerText = "⚠️ Processed " + totalPages + " pages, but details didn't match.";
-                }
-                
-                fileInput.value = '';
+                statusText.innerText = "✓ Processing Complete! Successfully matched and assigned " + matchedCount + " salary slips to respective workers.";
+                alert("Bulk PDF processed successfully! " + matchedCount + " payslips assigned.");
+
             } catch (err) {
-                alert("Error processing PDF: " + err.message);
-                statusBox.style.display = 'none';
+                console.error(err);
+                statusText.innerText = "Error processing PDF file. Please check console.";
             }
         }
 
         function loginWorker() {
             var pfInput = document.getElementById('pf-num-input').value.trim();
-            if (pfInput === "") {
-                alert("Please enter PF Number!");
-                return;
-            }
-
+            
             if (workerDatabase[pfInput]) {
-                var worker = workerDatabase[pfInput];
+                var w = workerDatabase[pfInput];
 
-                if (worker.status === "Inactive") {
-                    alert("This worker account has been DEACTIVATED!");
+                if (w.status === "Inactive") {
+                    alert("ACCESS DENIED! Your account is inactive/blocked. Please contact Moni Enterprises HR.");
                     return;
-                }
-                
-                document.getElementById('worker-userid').innerText = worker.userid;
-                document.getElementById('worker-name').innerText = worker.name;
-                document.getElementById('worker-pfno').innerText = worker.pfNumber;
-                document.getElementById('dash-company').innerText = worker.company;
-                document.getElementById('dash-father').innerText = worker.father || '-';
-                document.getElementById('dash-phone').innerText = worker.phone || '-';
-                document.getElementById('dash-idnum').innerText = worker.idnum || '-';
-                document.getElementById('dash-address').innerText = worker.address;
-                document.getElementById('dash-qual').innerText = worker.qual;
-                document.getElementById('dash-salary').innerText = worker.salary;
-                document.getElementById('dash-ot').innerText = worker.ot;
-                document.getElementById('worker-photo').src = worker.photo;
-
-                var badge = document.getElementById('dash-status-badge');
-                badge.innerText = "Active Worker";
-                badge.className = "status-badge status-active";
-
-                var payslipContainer = document.getElementById('payslip-container');
-                if (worker.salarySlipPdf) {
-                    payslipContainer.innerHTML = '<a href="' + worker.salarySlipPdf + '" download="Payslip_' + worker.userid + '.pdf" class="btn btn-blue" style="padding: 5px 12px; font-size: 13px; text-decoration: none; display: inline-block; width: auto;">📄 Download Salary Slip (PDF)</a>';
-                } else {
-                    payslipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
                 }
 
                 document.getElementById('login-box').style.display = 'none';
                 document.getElementById('worker-profile').style.display = 'block';
+
+                document.getElementById('worker-name').innerText = w.name;
+                document.getElementById('worker-pfno').innerText = "PF No: " + w.pfNumber;
+                document.getElementById('worker-userid').innerText = w.userid;
+                document.getElementById('worker-photo').src = w.photo;
+                document.getElementById('dash-company').innerText = w.company;
+                document.getElementById('dash-father').innerText = w.father || '-';
+                document.getElementById('dash-phone').innerText = w.phone || '-';
+                document.getElementById('dash-idnum').innerText = w.idnum || '-';
+                document.getElementById('dash-address').innerText = w.address || '-';
+                document.getElementById('dash-qual').innerText = w.qual || '-';
+                document.getElementById('dash-salary').innerText = w.salary;
+                document.getElementById('dash-ot').innerText = w.ot;
+
+                var badge = document.getElementById('dash-status-badge');
+                if(w.status === "Inactive") {
+                    badge.className = "status-badge status-inactive";
+                    badge.innerText = "Inactive / Left";
+                } else {
+                    badge.className = "status-badge status-active";
+                    badge.innerText = "Active Worker";
+                }
+
+                var payslipContainer = document.getElementById('payslip-container');
+                if (w.salarySlipPdf) {
+                    payslipContainer.innerHTML = '<a href="' + w.salarySlipPdf + '" target="_blank" class="btn btn-blue" style="display: inline-block; padding: 5px 12px; font-size: 13px; text-decoration: none;">📄 View / Download Payslip PDF</a>';
+                } else {
+                    payslipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
+                }
+
             } else {
                 alert("PF Number not found in database!");
             }
         }
 
         function logoutWorker() {
-            document.getElementById('pf-num-input').value = '';
-            document.getElementById('worker-profile').style.display = 'none';
             document.getElementById('login-box').style.display = 'block';
+            document.getElementById('worker-profile').style.display = 'none';
+            document.getElementById('pf-num-input').value = '';
         }
 
         function submitPublicJobApplication(e) {
@@ -1389,47 +1383,21 @@
                 return;
             }
 
-            var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
-            var pfNumber = "PF-" + Math.floor(10000 + Math.random() * 90000);
+            var refId = "ME-APP-" + Math.floor(100000 + Math.random() * 900000);
 
-            if(typeof workerDatabase !== 'undefined') {
-                workerDatabase[pfNumber] = {
-                    userid: appId,
-                    name: name,
-                    company: company,
-                    pfNumber: pfNumber,
-                    father: father,
-                    phone: phone,
-                    idnum: idnum,
-                    qual: qual,
-                    salary: "₹ 16,000.00 (Pending Review)",
-                    ot: "₹ 80 / Hour",
-                    status: "Active",
-                    addedBy: "Public-Portal"
-                };
-            }
-
-            document.getElementById('receipt-id').innerText = appId;
+            document.getElementById('receipt-id').innerText = refId;
             document.getElementById('receipt-name').innerText = name;
             document.getElementById('receipt-father').innerText = father;
             document.getElementById('receipt-phone').innerText = phone;
             document.getElementById('receipt-idnum').innerText = idnum;
             document.getElementById('receipt-company').innerText = company;
             document.getElementById('receipt-qual').innerText = qual;
-            
-            document.getElementById('job-receipt-box').style.display = 'block';
-            document.getElementById('job-receipt-box').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('public-job-form').reset();
-        }
 
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'bn,en,hi',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
+            document.getElementById('public-job-form').style.display = 'none';
+            document.getElementById('job-receipt-box').style.display = 'block';
+            alert("Application submitted successfully! Please save your receipt copy.");
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
+
