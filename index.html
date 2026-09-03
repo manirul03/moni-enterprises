@@ -35,6 +35,18 @@
             color: white;
             flex-wrap: wrap;
         }
+        .top-navbar .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .top-navbar .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c8e6c9;
+        }
         .top-navbar .nav-links {
             display: flex;
             gap: 15px;
@@ -54,24 +66,66 @@
         .top-navbar .nav-links a:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #ffffff;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            background: none !important;
+            font-size: 14px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .dropdown-content a:hover {
+            background-color: #e8f5e9 !important;
+            color: #1b5e20 !important;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
         .header {
             position: relative;
-            background: linear-gradient(rgba(27, 94, 32, 0.85), rgba(27, 94, 32, 0.85)), url('office.jpeg');
+            background: url('office.jpeg') no-repeat center center;
             background-size: cover;
-            background-position: center;
             color: #ffffff;
-            padding: 35px 20px;
+            padding: 50px 20px;
             text-align: center;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+        .header > * {
+            position: relative;
+            z-index: 2;
         }
         .header h1 {
             font-size: 32px;
             text-transform: uppercase;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         }
         .header p {
             font-size: 16px;
             color: #c8e6c9;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
         .company-gallery {
             display: flex;
@@ -164,6 +218,7 @@
             font-weight: bold;
             border-radius: 4px;
             margin-right: 5px;
+            margin-bottom: 5px;
         }
         .tab-btn.active {
             background-color: #1b5e20;
@@ -254,6 +309,15 @@
             background-color: #ffcdd2;
             color: #b71c1c;
         }
+        .sms-box {
+            background: #fffde7;
+            border: 1px solid #fbc02d;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #5d4037;
+        }
         .footer {
             background-color: #1b5e20;
             color: white;
@@ -292,32 +356,41 @@
         <div id="google_translate_element" style="display: inline-block;"></div>
     </div>
 
-    <!-- Top Navigation Bar (Single Login Link) -->
+    <!-- Top Navigation Bar -->
     <div class="top-navbar">
-        <div style="font-weight: bold; font-size: 16px;">Moni Enterprises Portal</div>
+        <div class="brand-container">
+            <img src="logo.jpeg" alt="Moni Enterprises Logo" class="brand-logo" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=100'">
+            <div style="font-weight: bold; font-size: 16px;">Moni Enterprises Portal</div>
+        </div>
         <ul class="nav-links">
             <li><a href="#home-section">Home</a></li>
-            <li><a href="#employee-portal">Login</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Login ▼</a>
+                <div class="dropdown-content">
+                    <a href="#employee-portal" onclick="scrollToSection('employee-portal')">👤 Employee Login</a>
+                    <a href="#supervisor-section" onclick="scrollToSection('supervisor-section')">📋 Supervisor Login</a>
+                    <a href="#admin-section" onclick="scrollToSection('admin-section')">🔒 Admin Login</a>
+                </div>
+            </li>
         </ul>
     </div>
 
-    <!-- Header with Office Photo Background -->
+    <!-- Header -->
     <div class="header">
         <h1>Moni Enterprises</h1>
         <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
         
-        <!-- Company & Office Photo Gallery Section -->
         <div class="company-gallery">
             <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
-            <img src="logo.jpeg" alt="Manpower Worksite" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300'">
-            <img src="unicast-logo.jpeg" alt="Industrial Operations" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'">
-            <img src="ask-logo.jpeg" alt="ASK Logo" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
+            <img src="logo.jpeg" alt="Manpower Logo" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300'">
+            <img src="unicast-logo.jpeg" alt="Unicast Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'">
+            <img src="ask-logo.jpeg" alt="ASK Client Logo" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'">
         </div>
     </div>
 
     <div class="container">
 
-        <!-- Active Companies & Ongoing Projects (Home Section) -->
+        <!-- Active Companies & Ongoing Projects -->
         <div class="card" id="home-section">
             <h2 class="section-title">Active Companies & Ongoing Projects</h2>
             <p style="margin-bottom: 15px;">Moni Enterprises supplies skilled & technical manpower to top industrial clients:</p>
@@ -326,41 +399,46 @@
                 <p style="font-size: 14px; color: #555;">Direct company contract labour supply and machine operator deployment.</p>
             </div>
             <div class="project-box" style="background: #f9fbf9; padding: 15px; border-left: 4px solid #2e7d32; margin-bottom: 10px; border-radius: 4px;">
-                <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</h4>
+                <h4 style="color: #1b5e20;">⚙️ ASK Automotive Pvt. Ltd & Unicast (Narasapura, Bangalore)</h4>
                 <p style="font-size: 14px; color: #555;">Active deployment of technical fitters, assembly line operators, and contract staff.</p>
             </div>
         </div>
 
-        <!-- Job Application & Joining Form with Receipt Copy -->
+        <!-- Job Application & Joining Form -->
         <div class="card" style="border: 2px solid #1565c0;" id="job-application-section">
             <h2 class="section-title" style="color: #1565c0; border-bottom-color: #64b5f6;">Job Application & Joining Form</h2>
-            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Interested candidates can fill out this form to apply for job vacancies. After submission, an official application receipt will be generated instantly.</p>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">সঠিক তথ্য (নাম, ১০ সংখ্যার মোবাইল নম্বর এবং ১২ সংখ্যার আইডি নাম্বার) দিয়ে ফর্ম পূরণ করুন। সম্পূর্ণ ফ্রি!</p>
 
             <form id="public-job-form" onsubmit="submitPublicJobApplication(event)">
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Full Name:</label>
-                    <input type="text" id="pub-name" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                <div class="input-group">
+                    <label>Full Name (শুধুমাত্র অক্ষর):</label>
+                    <input type="text" id="pub-name" placeholder="Enter your full name" required oninput="validateNameInput(this)">
                 </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Father's Name:</label>
-                    <input type="text" id="pub-father" placeholder="Enter father's name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                <div class="input-group">
+                    <label>Father's Name:</label>
+                    <input type="text" id="pub-father" placeholder="Enter father's name" required oninput="validateNameInput(this)">
                 </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Mobile Number:</label>
-                    <input type="tel" id="pub-phone" placeholder="Enter active mobile number" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                <div class="input-group">
+                    <label>Mobile Number (১০ সংখ্যা):</label>
+                    <input type="tel" id="pub-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
                 </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Preferred Company / Location:</label>
-                    <select id="pub-company" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                <div class="input-group">
+                    <label>ID / Verification Number (১২ সংখ্যা):</label>
+                    <input type="text" id="pub-idnum" placeholder="12 Digit ID Number" maxlength="12" required oninput="validateIdInput(this)">
+                </div>
+                <div class="input-group">
+                    <label>Preferred Company / Location:</label>
+                    <select id="pub-company" required>
                         <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd (Narasapura, Bangalore)</option>
+                        <option value="Unicast">Unicast (Narasapura, Bangalore)</option>
                         <option value="Narasapura Industrial Area, Bangalore">Narasapura Industrial Area, Bangalore (General)</option>
                     </select>
                 </div>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #1b5e20;">Qualification / Trade:</label>
-                    <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;">
+                <div class="input-group">
+                    <label>Qualification / Trade:</label>
+                    <input type="text" id="pub-qual" placeholder="e.g. ITI Fitter / Helper / Operator" required>
                 </div>
-                <button type="submit" class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%;">Submit Application & Get Receipt Copy</button>
+                <button type="submit" class="btn btn-blue" id="pub-submit-btn">Submit Application & Get Receipt Copy</button>
             </form>
 
             <div id="job-receipt-box" style="display: none; background: #e3f2fd; border: 2px dashed #1565c0; padding: 25px; border-radius: 8px; margin-top: 20px;">
@@ -372,10 +450,11 @@
                 <p style="margin-bottom: 8px;"><strong>Candidate Name:</strong> <span id="receipt-name">-</span></p>
                 <p style="margin-bottom: 8px;"><strong>Father's Name:</strong> <span id="receipt-father">-</span></p>
                 <p style="margin-bottom: 8px;"><strong>Mobile Number:</strong> <span id="receipt-phone">-</span></p>
+                <p style="margin-bottom: 8px;"><strong>ID Number:</strong> <span id="receipt-idnum">-</span></p>
                 <p style="margin-bottom: 8px;"><strong>Applied Company:</strong> <span id="receipt-company">-</span></p>
                 <p style="margin-bottom: 8px;"><strong>Qualification:</strong> <span id="receipt-qual">-</span></p>
                 <p style="margin-bottom: 15px;"><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
-                <button class="btn btn-blue" style="background-color: #1565c0; color: white; border: none; width: auto; padding: 8px 20px; border-radius: 5px; cursor: pointer;" onclick="window.print()">Print / Save Receipt Copy</button>
+                <button class="btn btn-blue" style="width: auto; padding: 8px 20px;" onclick="window.print()">Print / Save Receipt Copy</button>
             </div>
         </div>
 
@@ -397,7 +476,27 @@
 
             <div id="admin-dashboard" style="display: none;">
                 <button class="logout-btn" onclick="logoutAdmin()">Logout Admin</button>
-                <h4 style="color: #b71c1c; margin-bottom: 15px;">Manage Supervisors & Access Controls</h4>
+                <h4 style="color: #b71c1c; margin-bottom: 15px;">Manage Supervisors & Work Performance Tracking</h4>
+
+                <!-- Supervisor Performance Summary Table -->
+                <div style="margin-bottom: 25px;">
+                    <h5 style="color: #1b5e20; margin-bottom: 10px;">📊 Supervisor Work Performance Report (Auto-Count):</h5>
+                    <div style="overflow-x: auto;">
+                        <table class="slip-table" style="border: 1px solid #c8e6c9;">
+                            <thead>
+                                <tr style="background-color: #e8f5e9;">
+                                    <th>SUP ID</th>
+                                    <th>Supervisor Name</th>
+                                    <th>Mobile</th>
+                                    <th>Workers Joined / Added</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-sup-performance-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <form id="add-sup-form" onsubmit="createNewSupervisor(event)" style="background-color: #fff8f8; padding: 15px; border-radius: 5px; border: 1px solid #ffcdd2; margin-bottom: 20px;">
                     <h5 style="color: #b71c1c; margin-bottom: 10px;">Create New Supervisor Account</h5>
@@ -410,11 +509,19 @@
                         <input type="text" id="add-sup-name" placeholder="Enter supervisor name" required>
                     </div>
                     <div class="input-group">
+                        <label>Supervisor Mobile Number (১০ সংখ্যা):</label>
+                        <input type="tel" id="add-sup-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
+                    </div>
+                    <div class="input-group">
                         <label>Assign Password:</label>
                         <input type="text" id="add-sup-pass" placeholder="Enter password" required>
                     </div>
-                    <button type="submit" class="btn btn-red">Create / Add Supervisor</button>
+                    <button type="submit" class="btn btn-red">Create / Add Supervisor & Send SMS</button>
                 </form>
+
+                <div id="sup-sms-sim-box" class="sms-box" style="display: none; margin-bottom: 15px;">
+                    <strong>📱 Supervisor SMS Simulated Preview:</strong> <span id="sup-sms-text"></span>
+                </div>
 
                 <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management:</h5>
                 <table class="slip-table" style="margin-bottom: 15px;">
@@ -422,6 +529,7 @@
                         <tr style="background-color: #f5f5f5;">
                             <th>SUP ID</th>
                             <th>Name</th>
+                            <th>Mobile</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -429,10 +537,6 @@
                     <tbody id="supervisor-table-body">
                     </tbody>
                 </table>
-
-                <div id="admin-msg-box">
-                    <p id="admin-msg-text" style="font-weight: bold; color: #1b5e20;">Action completed successfully!</p>
-                </div>
             </div>
         </div>
 
@@ -461,6 +565,7 @@
                 <div style="margin-bottom: 20px;">
                     <button class="tab-btn active" id="tab-add-btn" onclick="switchTab('add')">Add New Worker</button>
                     <button class="tab-btn" id="tab-edit-btn" onclick="switchTab('edit')">Edit / Manage Worker</button>
+                    <button class="tab-btn" id="tab-company-btn" onclick="switchTab('company')">🏢 Company-wise Worker Lists</button>
                     <button class="tab-btn" id="tab-pdf-btn" onclick="switchTab('pdf')">Bulk Salary Slip PDF</button>
                 </div>
 
@@ -468,17 +573,36 @@
                 <form id="joining-form" onsubmit="processNewJoining(event)">
                     <div class="input-group">
                         <label>Worker Full Name:</label>
-                        <input type="text" id="new-name" placeholder="Enter full name" required>
+                        <input type="text" id="new-name" placeholder="Enter full name" required oninput="validateNameInput(this)">
                     </div>
 
                     <div class="input-group">
                         <label>Father's Name:</label>
-                        <input type="text" id="new-father" placeholder="Enter father's name" required>
+                        <input type="text" id="new-father" placeholder="Enter father's name" required oninput="validateNameInput(this)">
                     </div>
 
                     <div class="input-group">
-                        <label>PF Number:</label>
+                        <label>Mobile Number (১০ সংখ্যা):</label>
+                        <input type="tel" id="new-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
+                    </div>
+
+                    <div class="input-group">
+                        <label>ID / Verification Number (১২ সংখ্যা):</label>
+                        <input type="text" id="new-idnum" placeholder="12 Digit ID Number" maxlength="12" required oninput="validateIdInput(this)">
+                    </div>
+
+                    <div class="input-group">
+                        <label>PF / Registration Number:</label>
                         <input type="text" id="new-pf" placeholder="Enter PF Number (e.g. WB/CAL/12345/101)" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Assigned Company / Client:</label>
+                        <select id="new-company" required>
+                            <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd</option>
+                            <option value="Unicast">Unicast</option>
+                            <option value="Moni Enterprises General">Moni Enterprises General</option>
+                        </select>
                     </div>
 
                     <div class="input-group">
@@ -517,7 +641,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-blue">Create Worker Profile & ID</button>
+                    <button type="submit" class="btn btn-blue">Create Worker Profile & Send SMS Credentials</button>
                 </form>
 
                 <!-- 2. Edit & Deactivate Worker Section -->
@@ -530,17 +654,35 @@
 
                     <form id="edit-form" style="display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;" onsubmit="saveEditedWorker(event)">
                         <h4 style="color: #1b5e20; margin-bottom: 10px;">Edit Worker Profile & Account Status:</h4>
-                        
                         <input type="hidden" id="edit-target-pf">
 
                         <div class="input-group">
                             <label>Worker Full Name:</label>
-                            <input type="text" id="edit-name" required>
+                            <input type="text" id="edit-name" required oninput="validateNameInput(this)">
                         </div>
 
                         <div class="input-group">
                             <label>Father's Name:</label>
-                            <input type="text" id="edit-father" required>
+                            <input type="text" id="edit-father" required oninput="validateNameInput(this)">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Mobile Number (১০ সংখ্যা):</label>
+                            <input type="tel" id="edit-phone" maxlength="10" required oninput="validatePhoneInput(this)">
+                        </div>
+
+                        <div class="input-group">
+                            <label>ID Number (১২ সংখ্যা):</label>
+                            <input type="text" id="edit-idnum" maxlength="12" required oninput="validateIdInput(this)">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Assigned Company:</label>
+                            <select id="edit-company" required>
+                                <option value="ASK Automotive Pvt. Ltd">ASK Automotive Pvt. Ltd</option>
+                                <option value="Unicast">Unicast</option>
+                                <option value="Moni Enterprises General">Moni Enterprises General</option>
+                            </select>
                         </div>
 
                         <div class="input-group">
@@ -565,11 +707,41 @@
                     </form>
                 </div>
 
-                <!-- 3. Bulk PDF Payslip Splitter Section -->
+                <!-- 3. Company-wise Worker Lists Filter Section -->
+                <div id="company-filter-section" style="display: none;">
+                    <h4 style="color: #1b5e20; margin-bottom: 10px;">Company-wise Worker Directory</h4>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">এক ক্লিকে নির্দিষ্ট কোম্পানির কর্মীদের তালিকা দেখতে নিচের বোতামগুলোতে ক্লিক করুন:</p>
+                    
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-blue" style="width: auto; padding: 6px 15px;" onclick="filterWorkersByCompany('ASK Automotive Pvt. Ltd')">🏭 ASK Automotive List</button>
+                        <button class="btn btn-blue" style="width: auto; padding: 6px 15px; background-color: #00796b;" onclick="filterWorkersByCompany('Unicast')">⚙️ Unicast List</button>
+                        <button class="btn" style="width: auto; padding: 6px 15px; background-color: #555;" onclick="filterWorkersByCompany('All')">📋 View All Workers</button>
+                    </div>
+
+                    <h5 id="filter-heading" style="color: #1b5e20; margin-bottom: 10px;">Showing: All Workers</h5>
+                    <div style="overflow-x: auto;">
+                        <table class="slip-table">
+                            <thead>
+                                <tr style="background-color: #f5f5f5;">
+                                    <th>Worker ID</th>
+                                    <th>Name</th>
+                                    <th>PF No</th>
+                                    <th>Company</th>
+                                    <th>Mobile</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="company-filtered-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Bulk PDF Payslip Splitter Section -->
                 <div id="bulk-pdf-section" style="display: none;">
                     <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
-                        সব কর্মীর স্যালারি স্লিপের সম্মিলিত পিডিএফ ফাইল এখানে আপলোড করুন। সিস্টেম প্রতিটি পেজের টেক্সট স্ক্যান করে <strong>Worker Name + Company (Moni Enterprises) + PF Number</strong> হুবহু মিলে গেলে তবেই সেই পেজটি নির্দিষ্ট কর্মীর পোর্টালে যুক্ত করবে।
+                        সব কর্মীর স্যালারি স্লিপের সম্মিলিত পিডিএফ ফাইল এখানে আপলোড করুন। সিস্টেম প্রতিটি পেজের টেক্সট স্ক্যান করে <strong>Worker Name + Company + PF Number</strong> মিলিয়ে নির্দিষ্ট কর্মীর পোর্টালে যুক্ত করবে।
                     </p>
 
                     <div class="input-group">
@@ -585,9 +757,12 @@
                 </div>
 
                 <div id="joining-success-box">
-                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful!</h3>
+                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful & SMS Sent!</h3>
                     <p><strong>Worker ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
                     <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
+                    <div id="worker-sms-sim" class="sms-box" style="margin-top: 10px;">
+                        <strong>📱 SMS Sent to Worker Mobile:</strong> <span id="worker-sms-text"></span>
+                    </div>
                 </div>
 
                 <div id="edit-success-box">
@@ -598,7 +773,7 @@
             </div>
         </div>
 
-        <!-- Worker Portal (Login via PF Number) -->
+        <!-- Worker Portal -->
         <div class="card" id="employee-portal">
             <h2 class="section-title">Worker Profile Portal</h2>
             
@@ -628,12 +803,20 @@
                     
                     <table class="slip-table">
                         <tr>
-                            <td class="bold">Company Name:</td>
-                            <td style="font-weight: bold; color: #1565c0;">Moni Enterprises</td>
+                            <td class="bold">Company / Client:</td>
+                            <td id="dash-company" style="font-weight: bold; color: #1565c0;">Moni Enterprises</td>
                         </tr>
                         <tr>
                             <td class="bold">Father's Name:</td>
                             <td id="dash-father">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Mobile Number:</td>
+                            <td id="dash-phone">-</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">ID Number:</td>
+                            <td id="dash-idnum">-</td>
                         </tr>
                         <tr>
                             <td class="bold">Full Address:</td>
@@ -686,28 +869,68 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         var supervisorAccounts = {
-            "SUP-101": { pass: "1234", name: "Ramesh Kumar", status: "Active" },
-            "SUP-102": { pass: "1234", name: "Suresh Das", status: "Active" }
+            "SUP-101": { pass: "1234", name: "Ramesh Kumar", phone: "9876543210", status: "Active" },
+            "SUP-102": { pass: "1234", name: "Suresh Das", phone: "9123456789", status: "Active" }
         };
 
         var workerDatabase = {
             "WB/CAL/12345/101": {
                 userid: "ME-1001",
                 name: "Monirul Sekh",
-                company: "Moni Enterprises",
+                company: "ASK Automotive Pvt. Ltd",
                 pfNumber: "WB/CAL/12345/101",
                 father: "Alauddin Sekh",
+                phone: "9641762480",
+                idnum: "123456789012",
                 address: "Purba Bardhaman, West Bengal",
                 qual: "12th Pass (Higher Secondary)",
                 salary: "₹ 18,500.00",
                 ot: "₹ 90 / Hour",
                 photo: "https://via.placeholder.com/110",
                 status: "Active",
+                addedBy: "SUP-101",
+                salarySlipPdf: null
+            },
+            "WB/CAL/12345/102": {
+                userid: "ME-1002",
+                name: "Rahul Mondal",
+                company: "Unicast",
+                pfNumber: "WB/CAL/12345/102",
+                father: "Kartik Mondal",
+                phone: "9876543211",
+                idnum: "987654321012",
+                address: "Narasapura, Bangalore",
+                qual: "ITI / Diploma",
+                salary: "₹ 17,000.00",
+                ot: "₹ 80 / Hour",
+                photo: "https://via.placeholder.com/110",
+                status: "Active",
+                addedBy: "SUP-102",
                 salarySlipPdf: null
             }
         };
 
+        var currentLoggedInSup = "";
         var currentBase64Photo = "https://via.placeholder.com/110";
+
+        function validateNameInput(input) {
+            input.value = input.value.replace(/[^A-Za-z\s]/g, '');
+        }
+
+        function validatePhoneInput(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+        }
+
+        function validateIdInput(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 12);
+        }
+
+        function scrollToSection(sectionId) {
+            var element = document.getElementById(sectionId);
+            if(element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
         function loginAdmin() {
             var user = document.getElementById('admin-user').value.trim();
@@ -717,6 +940,7 @@
                 document.getElementById('admin-auth').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 renderSupervisorTable();
+                renderSupervisorPerformanceReport();
             } else {
                 alert("Invalid Master Admin Credentials!");
             }
@@ -727,6 +951,37 @@
             document.getElementById('admin-dashboard').style.display = 'none';
             document.getElementById('admin-user').value = '';
             document.getElementById('admin-pass').value = '';
+        }
+
+        function renderSupervisorPerformanceReport() {
+            var tbody = document.getElementById('admin-sup-performance-body');
+            tbody.innerHTML = '';
+
+            var supCounts = {};
+            for (var supId in supervisorAccounts) {
+                supCounts[supId] = 0;
+            }
+
+            for (var pf in workerDatabase) {
+                var w = workerDatabase[pf];
+                if (w.addedBy && supCounts[w.addedBy] !== undefined) {
+                    supCounts[w.addedBy]++;
+                }
+            }
+
+            for (var supId in supervisorAccounts) {
+                var sup = supervisorAccounts[supId];
+                var row = document.createElement('tr');
+                var count = supCounts[supId] || 0;
+                var badge = sup.status === 'Active' ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-inactive">Blocked</span>';
+
+                row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
+                                '<td>' + sup.name + '</td>' +
+                                '<td>' + sup.phone + '</td>' +
+                                '<td><span style="background: #e3f2fd; color: #0d47a1; padding: 3px 10px; border-radius: 4px; font-weight: bold;">' + count + ' Workers</span></td>' +
+                                '<td>' + badge + '</td>';
+                tbody.appendChild(row);
+            }
         }
 
         function renderSupervisorTable() {
@@ -747,6 +1002,7 @@
 
                 row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
                                 '<td>' + sup.name + '</td>' +
+                                '<td>' + sup.phone + '</td>' +
                                 '<td>' + statusBadge + '</td>' +
                                 '<td>' + toggleBtn + '</td>';
                 
@@ -758,6 +1014,7 @@
             if (supervisorAccounts[supId]) {
                 supervisorAccounts[supId].status = supervisorAccounts[supId].status === 'Active' ? 'Inactive' : 'Active';
                 renderSupervisorTable();
+                renderSupervisorPerformanceReport();
             }
         }
 
@@ -765,11 +1022,23 @@
             e.preventDefault();
             var id = document.getElementById('add-sup-id').value.trim();
             var name = document.getElementById('add-sup-name').value.trim();
+            var phone = document.getElementById('add-sup-phone').value.trim();
             var pass = document.getElementById('add-sup-pass').value.trim();
 
-            supervisorAccounts[id] = { pass: pass, name: name, status: "Active" };
+            if (phone.length !== 10) {
+                alert("ভুল মোবাইল নম্বর! সুপারভাইজারের মোবাইল নম্বর অবশ্যই ১০ সংখ্যার হতে হবে।");
+                return;
+            }
+
+            supervisorAccounts[id] = { pass: pass, name: name, phone: phone, status: "Active" };
+            
+            var smsMsg = "Dear " + name + ", your Supervisor ID is " + id + " and Password is " + pass + ". Moni Enterprises.";
+            document.getElementById('sup-sms-text').innerText = smsMsg + " (Sent to " + phone + ")";
+            document.getElementById('sup-sms-sim-box').style.display = 'block';
+
             document.getElementById('add-sup-form').reset();
             renderSupervisorTable();
+            renderSupervisorPerformanceReport();
             alert("New Supervisor created successfully!");
         }
 
@@ -783,9 +1052,11 @@
                     return;
                 }
                 if (supervisorAccounts[id].pass === pass) {
+                    currentLoggedInSup = id;
                     document.getElementById('supervisor-auth').style.display = 'none';
                     document.getElementById('supervisor-form-box').style.display = 'block';
                     document.getElementById('active-sup-id').innerText = id + " (" + supervisorAccounts[id].name + ")";
+                    filterWorkersByCompany('All');
                 } else {
                     alert("Invalid Password!");
                 }
@@ -795,6 +1066,7 @@
         }
 
         function logoutSupervisor() {
+            currentLoggedInSup = "";
             document.getElementById('supervisor-auth').style.display = 'block';
             document.getElementById('supervisor-form-box').style.display = 'none';
         }
@@ -806,10 +1078,12 @@
 
             document.getElementById('tab-add-btn').classList.remove('active');
             document.getElementById('tab-edit-btn').classList.remove('active');
+            document.getElementById('tab-company-btn').classList.remove('active');
             document.getElementById('tab-pdf-btn').classList.remove('active');
 
             document.getElementById('joining-form').style.display = 'none';
             document.getElementById('edit-worker-section').style.display = 'none';
+            document.getElementById('company-filter-section').style.display = 'none';
             document.getElementById('bulk-pdf-section').style.display = 'none';
 
             if(type === 'add') {
@@ -818,9 +1092,45 @@
             } else if(type === 'edit') {
                 document.getElementById('tab-edit-btn').classList.add('active');
                 document.getElementById('edit-worker-section').style.display = 'block';
+            } else if(type === 'company') {
+                document.getElementById('tab-company-btn').classList.add('active');
+                document.getElementById('company-filter-section').style.display = 'block';
+                filterWorkersByCompany('All');
             } else if(type === 'pdf') {
                 document.getElementById('tab-pdf-btn').classList.add('active');
                 document.getElementById('bulk-pdf-section').style.display = 'block';
+            }
+        }
+
+        function filterWorkersByCompany(companyName) {
+            var tbody = document.getElementById('company-filtered-table-body');
+            tbody.innerHTML = '';
+            var heading = document.getElementById('filter-heading');
+            
+            heading.innerText = companyName === 'All' ? "Showing: All Workers" : "Showing Workers for: " + companyName;
+
+            var count = 0;
+            for (var pf in workerDatabase) {
+                var w = workerDatabase[pf];
+                if (companyName === 'All' || w.company === companyName) {
+                    count++;
+                    var row = document.createElement('tr');
+                    var badge = w.status === 'Active' ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-inactive">Inactive</span>';
+                    
+                    row.innerHTML = '<td><strong>' + w.userid + '</strong></td>' +
+                                    '<td>' + w.name + '</td>' +
+                                    '<td>' + w.pfNumber + '</td>' +
+                                    '<td>' + w.company + '</td>' +
+                                    '<td>' + w.phone + '</td>' +
+                                    '<td>' + badge + '</td>';
+                    tbody.appendChild(row);
+                }
+            }
+
+            if(count === 0) {
+                var row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center; color: #888;">No workers found for this company.</td>';
+                tbody.appendChild(row);
             }
         }
 
@@ -843,28 +1153,42 @@
             
             var name = document.getElementById('new-name').value.trim();
             var father = document.getElementById('new-father').value.trim();
+            var phone = document.getElementById('new-phone').value.trim();
+            var idnum = document.getElementById('new-idnum').value.trim();
             var pf = document.getElementById('new-pf').value.trim();
+            var company = document.getElementById('new-company').value;
             var address = document.getElementById('new-address').value.trim();
             var qual = document.getElementById('new-qual').value;
             var salary = document.getElementById('new-salary').value.trim();
             var ot = document.getElementById('new-ot').value.trim();
+
+            if (phone.length !== 10 || idnum.length !== 12) {
+                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
+                return;
+            }
 
             var autoUserId = "ME-" + Math.floor(1000 + Math.random() * 9000);
 
             workerDatabase[pf] = {
                 userid: autoUserId,
                 name: name,
-                company: "Moni Enterprises",
+                company: company,
                 pfNumber: pf,
                 father: father,
+                phone: phone,
+                idnum: idnum,
                 address: address,
                 qual: qual,
                 salary: salary,
                 ot: ot,
                 photo: currentBase64Photo,
                 status: "Active",
+                addedBy: currentLoggedInSup || "Direct-Admin",
                 salarySlipPdf: null
             };
+
+            var workerSms = "Dear " + name + ", Welcome to Moni Enterprises. Your Worker ID: " + autoUserId + ", PF No: " + pf + " registered for " + company + ".";
+            document.getElementById('worker-sms-text').innerText = workerSms + " (Sent to Mobile: " + phone + ")";
 
             document.getElementById('gen-userid').innerText = autoUserId;
             document.getElementById('gen-pf').innerText = pf;
@@ -890,6 +1214,9 @@
                 document.getElementById('edit-target-pf').value = foundKey;
                 document.getElementById('edit-name').value = w.name;
                 document.getElementById('edit-father').value = w.father || '';
+                document.getElementById('edit-phone').value = w.phone || '';
+                document.getElementById('edit-idnum').value = w.idnum || '';
+                document.getElementById('edit-company').value = w.company || 'ASK Automotive Pvt. Ltd';
                 document.getElementById('edit-salary').value = w.salary;
                 document.getElementById('edit-ot').value = w.ot;
                 document.getElementById('edit-status').value = w.status || 'Active';
@@ -905,10 +1232,20 @@
         function saveEditedWorker(e) {
             e.preventDefault();
             var pf = document.getElementById('edit-target-pf').value;
+            var phone = document.getElementById('edit-phone').value.trim();
+            var idnum = document.getElementById('edit-idnum').value.trim();
+
+            if (phone.length !== 10 || idnum.length !== 12) {
+                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
+                return;
+            }
 
             if(workerDatabase[pf]) {
                 workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
                 workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
+                workerDatabase[pf].phone = phone;
+                workerDatabase[pf].idnum = idnum;
+                workerDatabase[pf].company = document.getElementById('edit-company').value;
                 workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
                 workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
                 workerDatabase[pf].status = document.getElementById('edit-status').value;
@@ -976,7 +1313,7 @@
                 if(assignedCount > 0) {
                     statusText.innerText = "✓ Success! " + assignedCount + " salary slip(s) matched and assigned to workers.";
                 } else {
-                    statusText.innerText = "⚠️ Processed " + totalPages + " pages, but Name + Company + PF Number didn't match together.";
+                    statusText.innerText = "⚠️ Processed " + totalPages + " pages, but details didn't match.";
                 }
                 
                 fileInput.value = '';
@@ -1004,7 +1341,10 @@
                 document.getElementById('worker-userid').innerText = worker.userid;
                 document.getElementById('worker-name').innerText = worker.name;
                 document.getElementById('worker-pfno').innerText = worker.pfNumber;
+                document.getElementById('dash-company').innerText = worker.company;
                 document.getElementById('dash-father').innerText = worker.father || '-';
+                document.getElementById('dash-phone').innerText = worker.phone || '-';
+                document.getElementById('dash-idnum').innerText = worker.idnum || '-';
                 document.getElementById('dash-address').innerText = worker.address;
                 document.getElementById('dash-qual').innerText = worker.qual;
                 document.getElementById('dash-salary').innerText = worker.salary;
@@ -1040,8 +1380,14 @@
             var name = document.getElementById('pub-name').value.trim();
             var father = document.getElementById('pub-father').value.trim();
             var phone = document.getElementById('pub-phone').value.trim();
+            var idnum = document.getElementById('pub-idnum').value.trim();
             var company = document.getElementById('pub-company').value;
             var qual = document.getElementById('pub-qual').value.trim();
+
+            if (phone.length !== 10 || idnum.length !== 12) {
+                alert("ভুল তথ্য! মোবাইল নম্বর ১০ সংখ্যা এবং আইডি ১২ সংখ্যার হতে হবে।");
+                return;
+            }
 
             var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
             var pfNumber = "PF-" + Math.floor(10000 + Math.random() * 90000);
@@ -1053,10 +1399,13 @@
                     company: company,
                     pfNumber: pfNumber,
                     father: father,
+                    phone: phone,
+                    idnum: idnum,
                     qual: qual,
                     salary: "₹ 16,000.00 (Pending Review)",
                     ot: "₹ 80 / Hour",
-                    status: "Active"
+                    status: "Active",
+                    addedBy: "Public-Portal"
                 };
             }
 
@@ -1064,6 +1413,7 @@
             document.getElementById('receipt-name').innerText = name;
             document.getElementById('receipt-father').innerText = father;
             document.getElementById('receipt-phone').innerText = phone;
+            document.getElementById('receipt-idnum').innerText = idnum;
             document.getElementById('receipt-company').innerText = company;
             document.getElementById('receipt-qual').innerText = qual;
             
