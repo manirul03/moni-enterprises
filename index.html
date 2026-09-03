@@ -547,18 +547,17 @@
                     <h5 style="color: #f57f17; margin-bottom: 5px;">✓ Supervisor Account Created & Sent!</h5>
                     <p><strong>Generated User ID:</strong> <span id="new-sup-uid" style="font-weight: bold; color: #b71c1c;">-</span></p>
                     <p><strong>Generated Password/OTP:</strong> <span id="new-sup-pass" style="font-weight: bold; color: #1b5e20;">-</span></p>
-                    <p style="font-size: 12px; color: #555; margin-top: 5px;">Credentials successfully sent to supervisor's mobile & WhatsApp.</p>
+                    <p style="font-size: 12px; color: #555; margin-top: 5px;">Credentials successfully sent to supervisor's mobile & WhatsApp $whatsapp-sup-link$.</p>
                     <a id="whatsapp-sup-link" href="#" target="_blank" class="btn" style="width: auto; padding: 6px 15px; background-color: #25d366; text-decoration: none; display:inline-block; margin-top: 8px; font-size: 13px;">💬 Send Login Details via WhatsApp</a>
                 </div>
 
-                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management & Credentials:</h5>
+                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management (Block / Permanent Delete):</h5>
                 <table class="slip-table" style="margin-bottom: 15px;">
                     <thead>
                         <tr style="background-color: #f5f5f5;">
                             <th>User ID</th>
                             <th>Name</th>
                             <th>Mobile</th>
-                            <th>Password / OTP</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -628,14 +627,6 @@
                     <div class="input-group">
                         <label>Mobile Number (10 Digits - Worker Login WhatsApp/SMS):</label>
                         <input type="tel" id="new-phone" placeholder="e.g. 9876543210" maxlength="10" required oninput="validatePhoneInput(this)">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Send Credential Via:</label>
-                        <select id="new-send-mode" required>
-                            <option value="whatsapp">WhatsApp Message</option>
-                            <option value="sms">SMS text</option>
-                        </select>
                     </div>
 
                     <div class="input-group">
@@ -778,7 +769,6 @@
                                     <th>PF No</th>
                                     <th>Company</th>
                                     <th>Mobile</th>
-                                    <th>Password/OTP</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -811,7 +801,7 @@
                     <p><strong>Assigned User ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
                     <p><strong>Login Password / OTP:</strong> <span id="gen-userpass" style="color: #b71c1c; font-size: 16px; font-weight: bold;">-</span></p>
                     <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
-                    <p style="margin-top: 5px; font-size: 13px; color: #555;">User ID & login details have been sent to worker's chosen mode.</p>
+                    <p style="margin-top: 5px; font-size: 13px; color: #555;">User ID & login details have been sent to worker's WhatsApp & mobile via SMS.</p>
                     <a id="whatsapp-worker-link" href="#" target="_blank" class="btn" style="width: auto; padding: 6px 15px; background-color: #25d366; text-decoration: none; display:inline-block; margin-top: 8px; font-size: 13px;">💬 Send Login Details via WhatsApp</a>
                 </div>
 
@@ -839,7 +829,7 @@
 
                 <div id="worker-otp-section" style="display: none;">
                     <div class="sms-box" id="worker-otp-display-box" style="margin-bottom: 10px;">
-                        <strong>Generated OTP / Password sent to chosen mode:</strong> <span id="worker-otp-code" style="color: #1565c0; font-size: 16px; font-weight: bold;">-</span>
+                        <strong>Generated OTP / Password sent to WhatsApp/SMS:</strong> <span id="worker-otp-code" style="color: #1565c0; font-size: 16px; font-weight: bold;">-</span>
                     </div>
                     <div class="input-group">
                         <label>Enter OTP Code / Password:</label>
@@ -966,8 +956,7 @@
                 photo: "https://via.placeholder.com/110",
                 status: "Active",
                 addedBy: "SUP-1001",
-                salarySlipPdf: null,
-                pass: "1234"
+                salarySlipPdf: null
             }
         };
 
@@ -1106,7 +1095,6 @@
                 row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
                                 '<td>' + sup.name + '</td>' +
                                 '<td>' + sup.phone + '</td>' +
-                                '<td><strong style="color: #1b5e20;">' + sup.pass + '</strong></td>' +
                                 '<td>' + statusBadge + '</td>' +
                                 '<td>' + toggleBtn + deleteBtn + '</td>';
                 
@@ -1236,4 +1224,370 @@
 
             if (supervisorAccounts[supId].pass === passInput) {
                 currentLoggedInSup = supId;
-                document.getElementById('supervisor-auth').style
+                document.getElementById('supervisor-auth').style.display = 'none';
+                document.getElementById('supervisor-form-box').style.display = 'block';
+                document.getElementById('active-sup-name-display').innerText = supervisorAccounts[supId].name + " (ID: " + supId + ")";
+                filterWorkersByCompany('All');
+            } else {
+                errBox.innerText = "❌ Error: ভুল পাসওয়ার্ড বা ওটিপি (Wrong Password/OTP)!";
+                errBox.style.display = 'block';
+            }
+        }
+
+        function logoutSupervisor() {
+            currentLoggedInSup = "";
+            document.getElementById('sup-userid-login').value = '';
+            document.getElementById('sup-pass-login').value = '';
+            document.getElementById('sup-error-msg').style.display = 'none';
+            document.getElementById('supervisor-auth').style.display = 'block';
+            document.getElementById('supervisor-form-box').style.display = 'none';
+        }
+
+        function switchTab(type) {
+            document.getElementById('joining-success-box').style.display = 'none';
+            document.getElementById('edit-success-box').style.display = 'none';
+            document.getElementById('pdf-process-box').style.display = 'none';
+
+            document.getElementById('tab-add-btn').classList.remove('active');
+            document.getElementById('tab-edit-btn').classList.remove('active');
+            document.getElementById('tab-company-btn').classList.remove('active');
+            document.getElementById('tab-pdf-btn').classList.remove('active');
+
+            document.getElementById('joining-form').style.display = 'none';
+            document.getElementById('edit-worker-section').style.display = 'none';
+            document.getElementById('company-filter-section').style.display = 'none';
+            document.getElementById('bulk-pdf-section').style.display = 'none';
+
+            if(type === 'add') {
+                document.getElementById('tab-add-btn').classList.add('active');
+                document.getElementById('joining-form').style.display = 'block';
+            } else if(type === 'edit') {
+                document.getElementById('tab-edit-btn').classList.add('active');
+                document.getElementById('edit-worker-section').style.display = 'block';
+            } else if(type === 'company') {
+                document.getElementById('tab-company-btn').classList.add('active');
+                document.getElementById('company-filter-section').style.display = 'block';
+                filterWorkersByCompany('All');
+            } else if(type === 'pdf') {
+                document.getElementById('tab-pdf-btn').classList.add('active');
+                document.getElementById('bulk-pdf-section').style.display = 'block';
+            }
+        }
+
+        function filterWorkersByCompany(companyName) {
+            var tbody = document.getElementById('company-filtered-table-body');
+            tbody.innerHTML = '';
+            var heading = document.getElementById('filter-heading');
+            
+            heading.innerText = companyName === 'All' ? "Showing: All Workers" : "Showing Workers for: " + companyName;
+
+            var count = 0;
+            for (var pf in workerDatabase) {
+                var w = workerDatabase[pf];
+                if (companyName === 'All' || w.company === companyName) {
+                    count++;
+                    var row = document.createElement('tr');
+                    var badge = w.status === 'Active' ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-inactive">Inactive</span>';
+                    
+                    row.innerHTML = '<td><strong>' + w.userid + '</strong></td>' +
+                                    '<td>' + w.name + '</td>' +
+                                    '<td>' + w.pfNumber + '</td>' +
+                                    '<td>' + w.company + '</td>' +
+                                    '<td>' + w.phone + '</td>' +
+                                    '<td>' + badge + '</td>';
+                    tbody.appendChild(row);
+                }
+            }
+
+            if(count === 0) {
+                var row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center; color: #888;">No workers found for this company.</td>';
+                tbody.appendChild(row);
+            }
+        }
+
+        function previewWorkerImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('img-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+                document.getElementById('preview-text').style.display = 'none';
+                currentBase64Photo = reader.result;
+            };
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function processNewJoining(e) {
+            e.preventDefault();
+            
+            var name = document.getElementById('new-name').value.trim();
+            var father = document.getElementById('new-father').value.trim();
+            var phone = document.getElementById('new-phone').value.trim();
+            var idnum = document.getElementById('new-idnum').value.trim();
+            var pf = document.getElementById('new-pf').value.trim();
+            var company = document.getElementById('new-company').value;
+            var address = document.getElementById('new-address').value.trim();
+            var qual = document.getElementById('new-qual').value;
+            var salary = document.getElementById('new-salary').value.trim();
+            var ot = document.getElementById('new-ot').value.trim();
+
+            if (phone.length !== 10 || idnum.length !== 12) {
+                alert("Error! Mobile number must be 10 digits and ID number must be 12 digits.");
+                return;
+            }
+
+            if (workerDatabase[pf]) {
+                alert("Error! PF Number already exists in database.");
+                return;
+            }
+
+            var userId = "ME-" + Math.floor(1000 + Math.random() * 9000);
+            var userPass = Math.floor(1000 + Math.random() * 9000).toString();
+
+            workerDatabase[pf] = {
+                userid: userId,
+                userpass: userPass,
+                name: name,
+                company: company,
+                pfNumber: pf,
+                father: father,
+                phone: phone,
+                idnum: idnum,
+                address: address,
+                qual: qual,
+                salary: salary,
+                ot: ot,
+                photo: currentBase64Photo,
+                status: "Active",
+                addedBy: currentLoggedInSup,
+                salarySlipPdf: null
+            };
+
+            document.getElementById('gen-userid').innerText = userId;
+            document.getElementById('gen-userpass').innerText = userPass;
+            document.getElementById('gen-pf').innerText = pf;
+            document.getElementById('joining-success-box').style.display = 'block';
+
+            var workerMsg = "Hello " + name + ", your Moni Enterprises Worker Account is created successfully. User ID: " + userId + ", Password/OTP: " + userPass + ". Login via portal.";
+            var waWorkerLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(workerMsg);
+            document.getElementById('whatsapp-worker-link').href = waWorkerLink;
+
+            document.getElementById('joining-form').reset();
+            document.getElementById('img-preview').style.display = 'none';
+            document.getElementById('preview-text').style.display = 'block';
+            currentBase64Photo = "https://via.placeholder.com/110";
+
+            renderSupervisorPerformanceReport();
+            alert("Worker registered successfully & login credentials sent via WhatsApp & SMS!");
+        }
+
+        function searchWorkerToEdit() {
+            var query = document.getElementById('search-query').value.trim();
+            var foundPf = "";
+
+            for (var pf in workerDatabase) {
+                var w = workerDatabase[pf];
+                if (pf === query || w.userid === query) {
+                    foundPf = pf;
+                    break;
+                }
+            }
+
+            if (!foundPf) {
+                alert("Worker not found! Please check PF Number or User ID.");
+                document.getElementById('edit-form').style.display = 'none';
+                return;
+            }
+
+            var w = workerDatabase[foundPf];
+            document.getElementById('edit-target-pf').value = foundPf;
+            document.getElementById('edit-name').value = w.name;
+            document.getElementById('edit-father').value = w.father;
+            document.getElementById('edit-phone').value = w.phone;
+            document.getElementById('edit-idnum').value = w.idnum;
+            document.getElementById('edit-company').value = w.company;
+            document.getElementById('edit-salary').value = w.salary;
+            document.getElementById('edit-ot').value = w.ot;
+            document.getElementById('edit-status').value = w.status;
+
+            document.getElementById('edit-form').style.display = 'block';
+        }
+
+        function saveEditedWorker(e) {
+            e.preventDefault();
+            var pf = document.getElementById('edit-target-pf').value;
+            
+            if (workerDatabase[pf]) {
+                workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
+                workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
+                workerDatabase[pf].phone = document.getElementById('edit-phone').value.trim();
+                workerDatabase[pf].idnum = document.getElementById('edit-idnum').value.trim();
+                workerDatabase[pf].company = document.getElementById('edit-company').value;
+                workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
+                workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
+                workerDatabase[pf].status = document.getElementById('edit-status').value;
+
+                document.getElementById('edit-success-box').style.display = 'block';
+                document.getElementById('edit-form').style.display = 'none';
+                document.getElementById('search-query').value = '';
+                alert("Worker profile updated successfully!");
+            }
+        }
+
+        async function processAndSplitPDF() {
+            var fileInput = document.getElementById('bulk-pdf-file');
+            var statusText = document.getElementById('pdf-status-text');
+            document.getElementById('pdf-process-box').style.display = 'block';
+
+            if (!fileInput.files[0]) {
+                alert("Please select a PDF file first!");
+                return;
+            }
+
+            statusText.innerText = "Reading PDF file...";
+            var fileReader = new FileReader();
+
+            fileReader.onload = async function() {
+                try {
+                    var typedarray = new Uint8Array(this.result);
+                    var pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+                    statusText.innerText = "Total pages found: " + pdfDoc.numPages + ". Processing pages...";
+
+                    var sourcePdfDoc = await PDFLib.PDFDocument.load(this.result);
+                    var matchedCount = 0;
+
+                    for (var i = 1; i <= pdfDoc.numPages; i++) {
+                        var page = await pdfDoc.getPage(i);
+                        var textContent = await page.getTextContent();
+                        var pageText = textContent.items.map(function(item) { return item.str; }).join(' ');
+
+                        for (var pf in workerDatabase) {
+                            if (pageText.includes(pf)) {
+                                var singlePdf = await PDFLib.PDFDocument.create();
+                                var [copiedPage] = await singlePdf.copyPages(sourcePdfDoc, [i - 1]);
+                                singlePdf.addPage(copiedPage);
+                                var pdfBytes = await singlePdf.save();
+                                
+                                var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                                var blobUrl = URL.createObjectURL(blob);
+                                workerDatabase[pf].salarySlipPdf = blobUrl;
+                                matchedCount++;
+                                break;
+                            }
+                        }
+                    }
+
+                    statusText.innerText = "✓ Processing Complete! Matched and attached salary slips for " + matchedCount + " workers.";
+                    alert("Salary slips successfully distributed to respective worker profiles!");
+                } catch (err) {
+                    console.error(err);
+                    statusText.innerText = "❌ Error processing PDF file.";
+                }
+            };
+
+            fileReader.readAsArrayBuffer(fileInput.files[0]);
+        }
+
+        function handleWorkerLoginFlow() {
+            var userId = document.getElementById('worker-userid-login').value.trim();
+            var phone = document.getElementById('worker-phone-login').value.trim();
+            var errBox = document.getElementById('worker-error-msg');
+            errBox.style.display = 'none';
+
+            var foundPf = "";
+            for (var pf in workerDatabase) {
+                var w = workerDatabase[pf];
+                if (w.userid === userId && w.phone === phone) {
+                    foundPf = pf;
+                    break;
+                }
+            }
+
+            if (!foundPf) {
+                errBox.innerText = "❌ Error: ভুল ইউজার আইডি বা মোবাইল নম্বর (Wrong User ID or Mobile Number)!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            if (workerDatabase[foundPf].status === "Inactive") {
+                errBox.innerText = "❌ Error: আপনার অ্যাকাউন্ট নিষ্ক্রিয় করা হয়েছে (Your account is inactive / blocked)!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            currentMatchedWorkerPf = foundPf;
+            generatedWorkerOtp = workerDatabase[foundPf].userpass || "1234";
+
+            document.getElementById('worker-otp-code').innerText = generatedWorkerOtp;
+            document.getElementById('worker-otp-section').style.display = 'block';
+            document.getElementById('worker-action-btn').innerText = "Verify OTP & Open Profile";
+            document.getElementById('worker-action-btn').setAttribute('onclick', 'verifyWorkerOtpAndLogin()');
+
+            var workerOtpMsg = "Your Moni Enterprises Login Password/OTP is: " + generatedWorkerOtp + ". Please use this to access your worker portal.";
+            var waLoginLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(workerOtpMsg);
+            
+            alert("Password / OTP sent to WhatsApp & SMS: " + generatedWorkerOtp);
+        }
+
+        function verifyWorkerOtpAndLogin() {
+            var enteredOtp = document.getElementById('worker-otp-input').value.trim();
+            var errBox = document.getElementById('worker-error-msg');
+
+            if (enteredOtp !== generatedWorkerOtp) {
+                errBox.innerText = "❌ Error: ভুল ওটিপি বা পাসওয়ার্ড (Wrong OTP or Password)!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            var w = workerDatabase[currentMatchedWorkerPf];
+
+            document.getElementById('worker-photo').src = w.photo;
+            document.getElementById('worker-name').innerText = w.name;
+            document.getElementById('worker-pfno').innerText = "PF No: " + w.pfNumber;
+            document.getElementById('worker-userid').innerText = w.userid;
+            document.getElementById('dash-company').innerText = w.company;
+            document.getElementById('dash-father').innerText = w.father;
+            document.getElementById('dash-phone').innerText = w.phone;
+            document.getElementById('dash-idnum').innerText = w.idnum;
+            document.getElementById('dash-address').innerText = w.address;
+            document.getElementById('dash-qual').innerText = w.qual;
+            document.getElementById('dash-salary').innerText = w.salary;
+            document.getElementById('dash-ot').innerText = w.ot;
+
+            var badge = document.getElementById('dash-status-badge');
+            if (w.status === "Active") {
+                badge.className = "status-badge status-active";
+                badge.innerText = "Active Worker";
+            } else {
+                badge.className = "status-badge status-inactive";
+                badge.innerText = "Inactive / Left";
+            }
+
+            var slipContainer = document.getElementById('payslip-container');
+            if (w.salarySlipPdf) {
+                slipContainer.innerHTML = '<a href="' + w.salarySlipPdf + '" target="_blank" class="btn btn-blue" style="display:inline-block; width:auto; padding:5px 15px; font-size:13px; text-decoration:none;">📄 Download Monthly Salary Slip (PDF)</a>';
+            } else {
+                slipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
+            }
+
+            document.getElementById('worker-login-box').style.display = 'none';
+            document.getElementById('worker-profile').style.display = 'block';
+        }
+
+        function logoutWorker() {
+            document.getElementById('worker-profile').style.display = 'none';
+            document.getElementById('worker-login-box').style.display = 'block';
+            document.getElementById('worker-userid-login').value = '';
+            document.getElementById('worker-phone-login').value = '';
+            document.getElementById('worker-otp-input').value = '';
+            document.getElementById('worker-otp-section').style.display = 'none';
+            document.getElementById('worker-action-btn').innerText = "Get Password / OTP & View Profile";
+            document.getElementById('worker-action-btn').setAttribute('onclick', 'handleWorkerLoginFlow()');
+            document.getElementById('worker-error-msg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
