@@ -350,6 +350,15 @@
             font-size: 13px;
             color: #5d4037;
         }
+        .sync-status {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            text-align: center;
+            padding: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #c8e6c9;
+        }
         .footer {
             background-color: #1b5e20;
             color: white;
@@ -358,7 +367,6 @@
             margin-top: 30px;
         }
 
-        /* Fixed Print Styles for Both Job Receipt & Worker Profile Card */
         @media print {
             body * {
                 visibility: hidden;
@@ -404,11 +412,12 @@
 </head>
 <body>
 
-    <!-- Google Translate Top Bar Integration -->
     <div class="language-header">
         <span>🌐 Select Language:</span>
         <div id="google_translate_element"></div>
     </div>
+
+    <div class="sync-status" id="db-sync-banner">🔄 Connecting to Online Cloud Database...</div>
 
     <div class="top-navbar">
         <div class="brand-container">
@@ -710,7 +719,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-blue">Create Worker Profile & Send WhatsApp/SMS Credentials</button>
+                    <button type="submit" class="btn btn-blue">Create Worker Profile & Save Online</button>
                 </form>
 
                 <div id="edit-worker-section" style="display: none;">
@@ -722,7 +731,7 @@
 
                     <form id="edit-form" style="display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;" onsubmit="saveEditedWorker(event)">
                         <h4 style="color: #1b5e20; margin-bottom: 10px;">Edit Worker Profile & Account Status:</h4>
-                        <input type="hidden" id="edit-target-pf">
+                        <input type="hidden" id="edit-target-key">
 
                         <div class="input-group">
                             <label>Worker Full Name:</label>
@@ -771,7 +780,10 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-blue">Save & Update Worker Status</button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="submit" class="btn btn-blue" style="flex: 1;">Save & Update Worker</button>
+                            <button type="button" class="btn btn-red" style="width: auto;" onclick="deleteWorkerPermanently()">Delete Worker</button>
+                        </div>
                     </form>
                 </div>
 
@@ -828,7 +840,7 @@
                 <div id="bulk-pdf-section" style="display: none;">
                     <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
-                        Upload combined salary slip PDF file here. The system will scan all pages, match <strong>PF Number</strong>, and attach single or multi-page slips to respective worker profiles.
+                        Upload combined salary slip PDF file here. The system will scan all pages, match <strong>PF Number</strong>, and save slips permanently to the cloud database for workers to download on their phones.
                     </p>
 
                     <div class="input-group">
@@ -836,7 +848,7 @@
                         <input type="file" id="bulk-pdf-file" accept="application/pdf">
                     </div>
 
-                    <button type="button" class="btn btn-blue" onclick="processAndSplitPDF()">Match & Distribute Salary Slips Automatically</button>
+                    <button type="button" class="btn btn-blue" onclick="processAndSplitPDF()">Match & Save Salary Slips Online</button>
 
                     <div id="pdf-process-box">
                         <p id="pdf-status-text" style="font-weight: bold; color: #1565c0;">Processing PDF pages...</p>
@@ -844,7 +856,7 @@
                 </div>
 
                 <div id="joining-success-box">
-                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Successful!</h3>
+                    <h3 style="color: #1b5e20; margin-bottom: 10px;">✓ Worker Registration Saved Online!</h3>
                     <p><strong>Assigned User ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
                     <p><strong>Login Password / OTP:</strong> <span id="gen-userpass" style="color: #b71c1c; font-size: 16px; font-weight: bold;">-</span></p>
                     <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
@@ -853,8 +865,8 @@
                 </div>
 
                 <div id="edit-success-box">
-                    <h3 style="color: #1b5e20; margin-bottom: 5px;">✓ Worker Details & Status Updated!</h3>
-                    <p>The worker info and account status have been updated in the database.</p>
+                    <h3 style="color: #1b5e20; margin-bottom: 5px;">✓ Worker Database Updated Online!</h3>
+                    <p>The changes have been permanently saved to the cloud database.</p>
                 </div>
 
             </div>
@@ -966,7 +978,6 @@
         <p>&copy; 2026 Moni Enterprises. All Rights Reserved. | Manpower Supply & Contractor Services</p>
     </div>
 
-    <!-- Google Translate Script Setup -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
@@ -983,65 +994,109 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
         }
 
-        // Built-in SVG Default Avatar (Works offline without external placeholder failures)
+        // Connected Firebase Realtime Database URL
+        var FIREBASE_DB_URL = "https://moni-enterprises-c42bd-default-rtdb.firebaseio.com";
+
         var DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 110 110'><rect width='110' height='110' fill='%23c8e6c9'/><circle cx='55' cy='42' r='20' fill='%232e7d32'/><path d='M20 98 C20 72 90 72 90 98' fill='%232e7d32'/></svg>";
 
-        // Default Initial Data
+        // Safe Key Encoding for Firebase (since Firebase keys cannot contain '/')
+        function encodeKey(pf) {
+            return pf.replace(/\//g, '_SLASH_').replace(/\./g, '_DOT_').replace(/#/g, '_HASH_').replace(/\$/g, '_DOLLAR_').replace(/\[/g, '_LBR_').replace(/\]/g, '_RBR_');
+        }
+
         var defaultSupervisors = {
             "SUP-1001": { name: "Ramesh Kumar", phone: "9876543210", pass: "4821", status: "Active" },
             "SUP-1002": { name: "Suresh Das", phone: "9123456789", pass: "9312", status: "Active" }
         };
 
-        var defaultWorkers = {
-            "WB/CAL/12345/101": {
-                userid: "ME-1001",
-                userpass: "1234",
-                name: "Monirul Sekh",
-                company: "ASK Automotive Pvt. Ltd",
-                pfNumber: "WB/CAL/12345/101",
-                father: "Alauddin Sekh",
-                phone: "9641762480",
-                idnum: "123456789012",
-                address: "Purba Bardhaman, West Bengal",
-                qual: "12th Pass (Higher Secondary)",
-                salary: "₹ 18,500.00",
-                ot: "₹ 90 / Hour",
-                photo: DEFAULT_AVATAR,
-                status: "Active",
-                addedBy: "SUP-1001",
-                salarySlipPdf: null
-            }
+        var defaultWorkers = {};
+        defaultWorkers[encodeKey("WB/CAL/12345/101")] = {
+            userid: "ME-1001",
+            userpass: "1234",
+            name: "Monirul Sekh",
+            company: "ASK Automotive Pvt. Ltd",
+            pfNumber: "WB/CAL/12345/101",
+            father: "Alauddin Sekh",
+            phone: "9641762480",
+            idnum: "123456789012",
+            address: "Purba Bardhaman, West Bengal",
+            qual: "12th Pass (Higher Secondary)",
+            salary: "₹ 18,500.00",
+            ot: "₹ 90 / Hour",
+            photo: DEFAULT_AVATAR,
+            status: "Active",
+            addedBy: "SUP-1001",
+            salarySlipBase64: null
         };
 
-        // Load Persisted Data from LocalStorage
-        var supervisorAccounts = JSON.parse(localStorage.getItem('me_supervisors')) || defaultSupervisors;
-        var supervisorTrash = JSON.parse(localStorage.getItem('me_supervisor_trash')) || {};
-        var workerDatabase = JSON.parse(localStorage.getItem('me_workers')) || defaultWorkers;
-        var jobApplications = JSON.parse(localStorage.getItem('me_job_applications')) || [];
+        var supervisorAccounts = {};
+        var supervisorTrash = {};
+        var workerDatabase = {};
+        var jobApplications = [];
 
-        function saveAllData() {
+        // Load Data from Firebase Cloud Database on Page Open
+        async function loadCloudDatabase() {
+            var banner = document.getElementById('db-sync-banner');
             try {
-                localStorage.setItem('me_supervisors', JSON.stringify(supervisorAccounts));
-                localStorage.setItem('me_supervisor_trash', JSON.stringify(supervisorTrash));
-                // Avoid saving temporary blob URLs in localStorage
-                var workersToSave = JSON.parse(JSON.stringify(workerDatabase));
-                for (var pf in workersToSave) {
-                    if (workersToSave[pf].salarySlipPdf && workersToSave[pf].salarySlipPdf.startsWith('blob:')) {
-                        workersToSave[pf].salarySlipPdf = null;
-                    }
+                var res = await fetch(FIREBASE_DB_URL + "/portalData.json");
+                var data = await res.json();
+
+                if (!data) {
+                    // First-time initialization in Firebase
+                    supervisorAccounts = defaultSupervisors;
+                    supervisorTrash = {};
+                    workerDatabase = defaultWorkers;
+                    jobApplications = [];
+                    await syncToCloudDatabase();
+                } else {
+                    supervisorAccounts = data.supervisors || defaultSupervisors;
+                    supervisorTrash = data.supervisorTrash || {};
+                    workerDatabase = data.workers || {};
+                    jobApplications = data.jobApplications || [];
                 }
-                localStorage.setItem('me_workers', JSON.stringify(workersToSave));
-                localStorage.setItem('me_job_applications', JSON.stringify(jobApplications));
-            } catch (e) {
-                console.warn("LocalStorage quota warning:", e);
+
+                banner.innerText = "🟢 Online Cloud Database Connected (Live Sync Active)";
+                banner.style.backgroundColor = "#e8f5e9";
+                banner.style.color = "#1b5e20";
+            } catch (err) {
+                console.error("Firebase load error:", err);
+                banner.innerText = "⚠️ Offline / Connection Warning — Check Internet";
+                banner.style.backgroundColor = "#ffebee";
+                banner.style.color = "#b71c1c";
             }
         }
+
+        // Save All Changes Permanently to Firebase Cloud Database
+        async function syncToCloudDatabase() {
+            var banner = document.getElementById('db-sync-banner');
+            banner.innerText = "🔄 Saving changes to cloud...";
+            try {
+                await fetch(FIREBASE_DB_URL + "/portalData.json", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        supervisors: supervisorAccounts,
+                        supervisorTrash: supervisorTrash,
+                        workers: workerDatabase,
+                        jobApplications: jobApplications
+                    })
+                });
+                banner.innerText = "🟢 All Changes Saved Permanently Online!";
+            } catch (err) {
+                console.error("Firebase save error:", err);
+                banner.innerText = "❌ Error saving to cloud. Check internet connection.";
+                alert("Database save failed! Please check your internet connection.");
+            }
+        }
+
+        // Start loading database immediately
+        loadCloudDatabase();
 
         var currentLoggedInSup = "";
         var currentBase64Photo = DEFAULT_AVATAR;
 
         var generatedWorkerOtp = "";
-        var currentMatchedWorkerPf = "";
+        var currentMatchedWorkerKey = "";
 
         function validateNameInput(input) {
             input.value = input.value.replace(/[^A-Za-z\s]/g, '');
@@ -1071,7 +1126,7 @@
             }, 500);
         }
 
-        function submitPublicJobApplication(e) {
+        async function submitPublicJobApplication(e) {
             e.preventDefault();
             var name = document.getElementById('pub-name').value.trim();
             var father = document.getElementById('pub-father').value.trim();
@@ -1097,7 +1152,7 @@
                 qual: qual,
                 appliedDate: new Date().toLocaleDateString()
             });
-            saveAllData();
+            await syncToCloudDatabase();
 
             document.getElementById('receipt-id').innerText = appId;
             document.getElementById('receipt-name').innerText = name;
@@ -1114,16 +1169,17 @@
             document.getElementById('whatsapp-receipt-btn').href = waLink;
 
             document.getElementById('public-job-form').reset();
-            alert("Application submitted successfully! Receipt copy generated below.");
+            alert("Application submitted & saved online! Receipt copy generated below.");
         }
 
-        function loginAdmin() {
+        async function loginAdmin() {
             var user = document.getElementById('admin-user').value.trim();
             var pass = document.getElementById('admin-pass').value.trim();
             var errBox = document.getElementById('admin-error-msg');
             errBox.style.display = 'none';
 
             if (user === "Manirul@me" && pass === "Moni@2026") {
+                await loadCloudDatabase();
                 document.getElementById('admin-auth').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 renderSupervisorTable();
@@ -1153,8 +1209,8 @@
                 supCounts[supId] = 0;
             }
 
-            for (var pf in workerDatabase) {
-                var w = workerDatabase[pf];
+            for (var key in workerDatabase) {
+                var w = workerDatabase[key];
                 if (w.addedBy && supCounts[w.addedBy] !== undefined) {
                     supCounts[w.addedBy]++;
                 }
@@ -1230,50 +1286,50 @@
             }
         }
 
-        function toggleSupStatus(supId) {
+        async function toggleSupStatus(supId) {
             if (supervisorAccounts[supId]) {
                 supervisorAccounts[supId].status = supervisorAccounts[supId].status === 'Active' ? 'Inactive' : 'Active';
-                saveAllData();
+                await syncToCloudDatabase();
                 renderSupervisorTable();
                 renderSupervisorPerformanceReport();
             }
         }
 
-        function deleteSupervisor(supId) {
+        async function deleteSupervisor(supId) {
             if (confirm("Are you sure you want to delete supervisor " + supId + "? It will move to the 30-day recovery folder.")) {
                 var supData = supervisorAccounts[supId];
                 supData.deletedDate = new Date().toLocaleDateString();
                 supervisorTrash[supId] = supData;
                 delete supervisorAccounts[supId];
-                saveAllData();
+                await syncToCloudDatabase();
                 renderSupervisorTable();
                 renderSupervisorTrashTable();
                 renderSupervisorPerformanceReport();
             }
         }
 
-        function restoreSupervisor(supId) {
+        async function restoreSupervisor(supId) {
             if (supervisorTrash[supId]) {
                 var supData = supervisorTrash[supId];
                 delete supData.deletedDate;
                 supervisorAccounts[supId] = supData;
                 delete supervisorTrash[supId];
-                saveAllData();
+                await syncToCloudDatabase();
                 renderSupervisorTable();
                 renderSupervisorTrashTable();
                 renderSupervisorPerformanceReport();
             }
         }
 
-        function permanentDeleteSupervisor(supId) {
+        async function permanentDeleteSupervisor(supId) {
             if (confirm("Permanently delete supervisor " + supId + "? This action cannot be undone.")) {
                 delete supervisorTrash[supId];
-                saveAllData();
+                await syncToCloudDatabase();
                 renderSupervisorTrashTable();
             }
         }
 
-        function createNewSupervisor(e) {
+        async function createNewSupervisor(e) {
             e.preventDefault();
             var name = document.getElementById('add-sup-name').value.trim();
             var phone = document.getElementById('add-sup-phone').value.trim();
@@ -1292,7 +1348,7 @@
                 pass: supPass,
                 status: "Active"
             };
-            saveAllData();
+            await syncToCloudDatabase();
 
             document.getElementById('new-sup-uid').innerText = supId;
             document.getElementById('new-sup-pass').innerText = supPass;
@@ -1305,15 +1361,16 @@
             document.getElementById('add-sup-form').reset();
             renderSupervisorTable();
             renderSupervisorPerformanceReport();
-            alert("New Supervisor created! Click the WhatsApp button to send credentials to " + phone + ".");
+            alert("New Supervisor saved online! Click the WhatsApp button to send credentials to " + phone + ".");
         }
 
-        // Supervisor Login Flow with Blocked User Handling
-        function loginSupervisor() {
+        async function loginSupervisor() {
             var supId = document.getElementById('sup-userid-login').value.trim();
             var passInput = document.getElementById('sup-pass-login').value.trim();
             var errBox = document.getElementById('sup-error-msg');
             errBox.style.display = 'none';
+
+            await loadCloudDatabase();
 
             if (!supervisorAccounts[supId]) {
                 errBox.innerText = "❌ Error: ভুল সুপারভাইজার ইউজার আইডি (Your User ID is wrong)!";
@@ -1391,7 +1448,7 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            if (jobApplications.length === 0) {
+            if (!jobApplications || jobApplications.length === 0) {
                 var emptyRow = document.createElement('tr');
                 emptyRow.innerHTML = '<td colspan="6" style="text-align: center; color: #888;">No online job applications received yet.</td>';
                 tbody.appendChild(emptyRow);
@@ -1421,8 +1478,8 @@
             heading.innerText = companyName === 'All' ? "Showing: All Workers" : "Showing Workers for: " + companyName;
 
             var count = 0;
-            for (var pf in workerDatabase) {
-                var w = workerDatabase[pf];
+            for (var key in workerDatabase) {
+                var w = workerDatabase[key];
                 if (companyName === 'All' || w.company === companyName) {
                     count++;
                     var row = document.createElement('tr');
@@ -1446,20 +1503,35 @@
         }
 
         function previewWorkerImage(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
             var reader = new FileReader();
-            reader.onload = function() {
-                var output = document.getElementById('img-preview');
-                output.src = reader.result;
-                output.style.display = 'block';
-                document.getElementById('preview-text').style.display = 'none';
-                currentBase64Photo = reader.result;
+            reader.onload = function(e) {
+                // Compress image slightly to keep cloud database fast
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var maxDim = 220;
+                    var scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    var compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+                    var output = document.getElementById('img-preview');
+                    output.src = compressedDataUrl;
+                    output.style.display = 'block';
+                    document.getElementById('preview-text').style.display = 'none';
+                    currentBase64Photo = compressedDataUrl;
+                };
+                img.src = e.target.result;
             };
-            if (event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
+            reader.readAsDataURL(file);
         }
 
-        function processNewJoining(e) {
+        async function processNewJoining(e) {
             e.preventDefault();
 
             var name = document.getElementById('new-name').value.trim();
@@ -1478,7 +1550,8 @@
                 return;
             }
 
-            if (workerDatabase[pf]) {
+            var safeKey = encodeKey(pf);
+            if (workerDatabase[safeKey]) {
                 alert("Error! PF Number already exists in database.");
                 return;
             }
@@ -1486,7 +1559,7 @@
             var userId = "ME-" + Math.floor(1000 + Math.random() * 9000);
             var userPass = Math.floor(1000 + Math.random() * 9000).toString();
 
-            workerDatabase[pf] = {
+            workerDatabase[safeKey] = {
                 userid: userId,
                 userpass: userPass,
                 name: name,
@@ -1502,9 +1575,9 @@
                 photo: currentBase64Photo,
                 status: "Active",
                 addedBy: currentLoggedInSup,
-                salarySlipPdf: null
+                salarySlipBase64: null
             };
-            saveAllData();
+            await syncToCloudDatabase();
 
             document.getElementById('gen-userid').innerText = userId;
             document.getElementById('gen-userpass').innerText = userPass;
@@ -1521,29 +1594,29 @@
             currentBase64Photo = DEFAULT_AVATAR;
 
             renderSupervisorPerformanceReport();
-            alert("Worker registered successfully! Click the WhatsApp button below to send login credentials.");
+            alert("Worker registered & saved permanently online!");
         }
 
         function searchWorkerToEdit() {
             var query = document.getElementById('search-query').value.trim();
-            var foundPf = "";
+            var foundKey = "";
 
-            for (var pf in workerDatabase) {
-                var w = workerDatabase[pf];
-                if (pf === query || w.userid === query) {
-                    foundPf = pf;
+            for (var key in workerDatabase) {
+                var w = workerDatabase[key];
+                if (w.pfNumber === query || w.userid === query) {
+                    foundKey = key;
                     break;
                 }
             }
 
-            if (!foundPf) {
+            if (!foundKey) {
                 alert("Worker not found! Please check PF Number or User ID.");
                 document.getElementById('edit-form').style.display = 'none';
                 return;
             }
 
-            var w = workerDatabase[foundPf];
-            document.getElementById('edit-target-pf').value = foundPf;
+            var w = workerDatabase[foundKey];
+            document.getElementById('edit-target-key').value = foundKey;
             document.getElementById('edit-name').value = w.name;
             document.getElementById('edit-father').value = w.father;
             document.getElementById('edit-phone').value = w.phone;
@@ -1556,29 +1629,51 @@
             document.getElementById('edit-form').style.display = 'block';
         }
 
-        function saveEditedWorker(e) {
+        async function saveEditedWorker(e) {
             e.preventDefault();
-            var pf = document.getElementById('edit-target-pf').value;
+            var key = document.getElementById('edit-target-key').value;
 
-            if (workerDatabase[pf]) {
-                workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
-                workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
-                workerDatabase[pf].phone = document.getElementById('edit-phone').value.trim();
-                workerDatabase[pf].idnum = document.getElementById('edit-idnum').value.trim();
-                workerDatabase[pf].company = document.getElementById('edit-company').value;
-                workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
-                workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
-                workerDatabase[pf].status = document.getElementById('edit-status').value;
-                saveAllData();
+            if (workerDatabase[key]) {
+                workerDatabase[key].name = document.getElementById('edit-name').value.trim();
+                workerDatabase[key].father = document.getElementById('edit-father').value.trim();
+                workerDatabase[key].phone = document.getElementById('edit-phone').value.trim();
+                workerDatabase[key].idnum = document.getElementById('edit-idnum').value.trim();
+                workerDatabase[key].company = document.getElementById('edit-company').value;
+                workerDatabase[key].salary = document.getElementById('edit-salary').value.trim();
+                workerDatabase[key].ot = document.getElementById('edit-ot').value.trim();
+                workerDatabase[key].status = document.getElementById('edit-status').value;
+                await syncToCloudDatabase();
 
                 document.getElementById('edit-success-box').style.display = 'block';
                 document.getElementById('edit-form').style.display = 'none';
                 document.getElementById('search-query').value = '';
-                alert("Worker profile updated successfully!");
+                alert("Worker profile updated permanently online!");
             }
         }
 
-        // Fixed Multi-Page PDF Splitter & Matcher
+        async function deleteWorkerPermanently() {
+            var key = document.getElementById('edit-target-key').value;
+            if (!key || !workerDatabase[key]) return;
+
+            var workerName = workerDatabase[key].name;
+            if (confirm("Are you sure you want to permanently delete worker " + workerName + "?")) {
+                delete workerDatabase[key];
+                await syncToCloudDatabase();
+                document.getElementById('edit-form').style.display = 'none';
+                document.getElementById('search-query').value = '';
+                alert("Worker " + workerName + " permanently deleted from database!");
+            }
+        }
+
+        function uint8ToBase64(uint8Array) {
+            var binary = '';
+            var len = uint8Array.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(uint8Array[i]);
+            }
+            return btoa(binary);
+        }
+
         async function processAndSplitPDF() {
             var fileInput = document.getElementById('bulk-pdf-file');
             var statusText = document.getElementById('pdf-status-text');
@@ -1604,40 +1699,44 @@
                     statusText.innerText = "Total pages found: " + pdfDoc.numPages + ". Scanning pages...";
 
                     var sourcePdfDoc = await PDFLib.PDFDocument.load(this.result);
-                    var matchedPagesByPf = {};
+                    var matchedPagesByKey = {};
 
                     for (var i = 1; i <= pdfDoc.numPages; i++) {
                         var page = await pdfDoc.getPage(i);
                         var textContent = await page.getTextContent();
                         var pageText = textContent.items.map(function(item) { return item.str; }).join(' ');
 
-                        for (var pf in workerDatabase) {
-                            if (pageText.includes(pf)) {
-                                if (!matchedPagesByPf[pf]) {
-                                    matchedPagesByPf[pf] = [];
+                        for (var key in workerDatabase) {
+                            var pf = workerDatabase[key].pfNumber;
+                            if (pf && pageText.includes(pf)) {
+                                if (!matchedPagesByKey[key]) {
+                                    matchedPagesByKey[key] = [];
                                 }
-                                matchedPagesByPf[pf].push(i - 1);
+                                matchedPagesByKey[key].push(i - 1);
                             }
                         }
                     }
 
                     var matchedWorkerCount = 0;
-                    for (var pf in matchedPagesByPf) {
+                    for (var key in matchedPagesByKey) {
                         var singlePdf = await PDFLib.PDFDocument.create();
-                        var copiedPages = await singlePdf.copyPages(sourcePdfDoc, matchedPagesByPf[pf]);
+                        var copiedPages = await singlePdf.copyPages(sourcePdfDoc, matchedPagesByKey[key]);
                         copiedPages.forEach(function(copiedPage) {
                             singlePdf.addPage(copiedPage);
                         });
                         var pdfBytes = await singlePdf.save();
-
-                        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        var blobUrl = URL.createObjectURL(blob);
-                        workerDatabase[pf].salarySlipPdf = blobUrl;
+                        var base64Pdf = "data:application/pdf;base64," + uint8ToBase64(pdfBytes);
+                        workerDatabase[key].salarySlipBase64 = base64Pdf;
                         matchedWorkerCount++;
                     }
 
-                    statusText.innerText = "✓ Processing Complete! Matched and attached salary slips for " + matchedWorkerCount + " workers.";
-                    alert("Salary slips successfully distributed to " + matchedWorkerCount + " worker profiles!");
+                    if (matchedWorkerCount > 0) {
+                        statusText.innerText = "Saving " + matchedWorkerCount + " salary slips to online database...";
+                        await syncToCloudDatabase();
+                    }
+
+                    statusText.innerText = "✓ Processing Complete! Saved salary slips online for " + matchedWorkerCount + " workers.";
+                    alert("Salary slips successfully saved online for " + matchedWorkerCount + " workers!");
                 } catch (err) {
                     console.error(err);
                     statusText.innerText = "❌ Error processing PDF file.";
@@ -1647,35 +1746,36 @@
             fileReader.readAsArrayBuffer(fileInput.files[0]);
         }
 
-        function handleWorkerLoginFlow() {
+        async function handleWorkerLoginFlow() {
             var userId = document.getElementById('worker-userid-login').value.trim();
             var phone = document.getElementById('worker-phone-login').value.trim();
             var errBox = document.getElementById('worker-error-msg');
             errBox.style.display = 'none';
 
-            var foundPf = "";
-            for (var pf in workerDatabase) {
-                var w = workerDatabase[pf];
+            await loadCloudDatabase();
+
+            var foundKey = "";
+            for (var key in workerDatabase) {
+                var w = workerDatabase[key];
                 if (w.userid === userId && w.phone === phone) {
-                    foundPf = pf;
+                    foundKey = key;
                     break;
                 }
             }
 
-            if (!foundPf) {
+            if (!foundKey) {
                 errBox.innerText = "❌ Error: ভুল ইউজার আইডি বা মোবাইল নম্বর (Wrong User ID or Mobile Number)!";
                 errBox.style.display = 'block';
                 return;
             }
 
-            if (workerDatabase[foundPf].status === "Inactive") {
+            if (workerDatabase[foundKey].status === "Inactive") {
                 errBox.innerText = "❌ Error: আপনার অ্যাকাউন্ট নিষ্ক্রিয় করা হয়েছে (Your account is inactive / blocked)!";
                 errBox.style.display = 'block';
                 return;
             }
 
-            currentMatchedWorkerPf = foundPf;
-            // Generate fresh 4-digit OTP (or fallback to assigned password)
+            currentMatchedWorkerKey = foundKey;
             generatedWorkerOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
             var workerOtpMsg = "Your Moni Enterprises Login OTP is: " + generatedWorkerOtp + ". Please enter this code to access your worker profile.";
@@ -1690,7 +1790,7 @@
         function verifyWorkerOtpAndLogin() {
             var enteredOtp = document.getElementById('worker-otp-input').value.trim();
             var errBox = document.getElementById('worker-error-msg');
-            var w = workerDatabase[currentMatchedWorkerPf];
+            var w = workerDatabase[currentMatchedWorkerKey];
 
             if (!w || (enteredOtp !== generatedWorkerOtp && enteredOtp !== w.userpass)) {
                 errBox.innerText = "❌ Error: ভুল ওটিপি বা পাসওয়ার্ড (Wrong OTP or Password)!";
@@ -1722,8 +1822,8 @@
             }
 
             var slipContainer = document.getElementById('payslip-container');
-            if (w.salarySlipPdf) {
-                slipContainer.innerHTML = '<a href="' + w.salarySlipPdf + '" target="_blank" class="btn btn-blue" style="display:inline-block; width:auto; padding:5px 15px; font-size:13px; text-decoration:none;">📄 Download Monthly Salary Slip (PDF)</a>';
+            if (w.salarySlipBase64) {
+                slipContainer.innerHTML = '<a href="' + w.salarySlipBase64 + '" download="' + w.userid + '_Salary_Slip.pdf" class="btn btn-blue" style="display:inline-block; width:auto; padding:5px 15px; font-size:13px; text-decoration:none;">📄 Download Monthly Salary Slip (PDF)</a>';
             } else {
                 slipContainer.innerHTML = '<span style="color: #888; font-size: 13px;">No payslip uploaded yet</span>';
             }
@@ -1734,7 +1834,7 @@
 
         function logoutWorker() {
             generatedWorkerOtp = "";
-            currentMatchedWorkerPf = "";
+            currentMatchedWorkerKey = "";
             document.getElementById('worker-profile').style.display = 'none';
             document.getElementById('worker-login-box').style.display = 'block';
             document.getElementById('worker-userid-login').value = '';
