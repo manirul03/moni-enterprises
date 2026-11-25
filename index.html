@@ -106,7 +106,7 @@
 
         .header {
             position: relative;
-            background: url('office.jpeg') no-repeat center center;
+            background: linear-gradient(rgba(20, 71, 23, 0.85), rgba(27, 94, 32, 0.85)), url('office.jpeg') no-repeat center center;
             background-size: cover;
             color: #ffffff;
             padding: 50px 20px;
@@ -116,7 +116,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.35);
             z-index: 1;
         }
         .header > * {
@@ -133,7 +133,7 @@
             color: #c8e6c9;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
-        
+
         .slider-container {
             width: 160px;
             height: 100px;
@@ -358,24 +358,45 @@
             margin-top: 30px;
         }
 
+        /* Fixed Print Styles for Both Job Receipt & Worker Profile Card */
         @media print {
             body * {
                 visibility: hidden;
             }
-            #job-receipt-box, #job-receipt-box * {
+            body.printing-receipt #job-receipt-box,
+            body.printing-receipt #job-receipt-box * {
                 visibility: visible;
             }
-            #job-receipt-box {
+            body.printing-receipt #job-receipt-box {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
                 margin: 0;
-                border: none !important;
+                border: 1px solid #1565c0 !important;
                 background: #ffffff !important;
                 box-shadow: none !important;
             }
-            #job-receipt-box button {
+            body.printing-receipt #job-receipt-box button,
+            body.printing-receipt #job-receipt-box a {
+                display: none !important;
+            }
+
+            body.printing-profile #worker-profile-card,
+            body.printing-profile #worker-profile-card * {
+                visibility: visible;
+            }
+            body.printing-profile #worker-profile-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                border: 2px solid #2e7d32 !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+            }
+            body.printing-profile #payslip-container {
                 display: none !important;
             }
         }
@@ -410,7 +431,7 @@
     <div class="header">
         <h1>Moni Enterprises</h1>
         <p>Manpower Supply Solutions (Proprietor: Monirul Sekh)</p>
-        
+
         <div class="slider-container">
             <div class="slide-track">
                 <img src="office.jpeg" alt="Office Building" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300'">
@@ -486,7 +507,7 @@
                 <p style="margin-bottom: 8px;"><strong>Qualification:</strong> <span id="receipt-qual">-</span></p>
                 <p style="margin-bottom: 15px;"><strong>Status:</strong> <span style="color: #2e7d32; font-weight: bold;">Under Verification by Moni Enterprises HR</span></p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-blue" style="width: auto; padding: 8px 20px;" onclick="window.print()">Print / Save Receipt Copy</button>
+                    <button type="button" class="btn btn-blue" style="width: auto; padding: 8px 20px;" onclick="printSection('printing-receipt')">Print / Save Receipt Copy</button>
                     <a id="whatsapp-receipt-btn" href="#" target="_blank" class="btn" style="width: auto; padding: 8px 20px; background-color: #25d366; text-decoration: none; display:inline-block;">💬 Send Receipt via WhatsApp</a>
                 </div>
             </div>
@@ -494,7 +515,7 @@
 
         <div class="card" style="border: 2px solid #b71c1c;" id="admin-section">
             <h2 class="section-title admin-title">Master Admin Panel (Proprietor Only)</h2>
-            
+
             <div id="admin-auth">
                 <div class="input-group">
                     <label style="color: #b71c1c;">Admin Username:</label>
@@ -505,11 +526,11 @@
                     <input type="password" id="admin-pass" placeholder="Enter password">
                 </div>
                 <div id="admin-error-msg" class="error-msg"></div>
-                <button class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
+                <button type="button" class="btn btn-red" onclick="loginAdmin()">Login Master Admin</button>
             </div>
 
             <div id="admin-dashboard" style="display: none;">
-                <button class="logout-btn" onclick="logoutAdmin()">Logout Admin</button>
+                <button type="button" class="logout-btn" onclick="logoutAdmin()">Logout Admin</button>
                 <h4 style="color: #b71c1c; margin-bottom: 15px;">Manage Supervisors & Work Performance Tracking</h4>
 
                 <div style="margin-bottom: 25px;">
@@ -534,7 +555,7 @@
                     <h5 style="color: #b71c1c; margin-bottom: 10px;">Create New Supervisor Account</h5>
                     <div class="input-group">
                         <label>Supervisor Full Name:</label>
-                        <input type="text" id="add-sup-name" placeholder="Enter supervisor name" required>
+                        <input type="text" id="add-sup-name" placeholder="Enter supervisor name" required oninput="validateNameInput(this)">
                     </div>
                     <div class="input-group">
                         <label>Supervisor Mobile Number (10 Digits - For WhatsApp/SMS Credentials):</label>
@@ -544,48 +565,52 @@
                 </form>
 
                 <div id="admin-sup-created-box" style="display: none; background: #fffde7; border: 1px solid #fbc02d; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                    <h5 style="color: #f57f17; margin-bottom: 5px;">✓ Supervisor Account Created & Sent!</h5>
+                    <h5 style="color: #f57f17; margin-bottom: 5px;">✓ Supervisor Account Created!</h5>
                     <p><strong>Generated User ID:</strong> <span id="new-sup-uid" style="font-weight: bold; color: #b71c1c;">-</span></p>
                     <p><strong>Generated Password/OTP:</strong> <span id="new-sup-pass" style="font-weight: bold; color: #1b5e20;">-</span></p>
-                    <p style="font-size: 12px; color: #555; margin-top: 5px;">Credentials successfully sent to supervisor's mobile & WhatsApp $whatsapp-sup-link$.</p>
+                    <p style="font-size: 12px; color: #555; margin-top: 5px;">Click the button below to share login credentials directly on the supervisor's WhatsApp.</p>
                     <a id="whatsapp-sup-link" href="#" target="_blank" class="btn" style="width: auto; padding: 6px 15px; background-color: #25d366; text-decoration: none; display:inline-block; margin-top: 8px; font-size: 13px;">💬 Send Login Details via WhatsApp</a>
                 </div>
 
-                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management (Block / Permanent Delete):</h5>
-                <table class="slip-table" style="margin-bottom: 15px;">
-                    <thead>
-                        <tr style="background-color: #f5f5f5;">
-                            <th>User ID</th>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="supervisor-table-body">
-                    </tbody>
-                </table>
+                <h5 style="color: #1b5e20; margin-bottom: 10px;">Supervisor Account Status Management (Block / Delete):</h5>
+                <div style="overflow-x: auto;">
+                    <table class="slip-table" style="margin-bottom: 15px;">
+                        <thead>
+                            <tr style="background-color: #f5f5f5;">
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supervisor-table-body">
+                        </tbody>
+                    </table>
+                </div>
 
                 <h5 style="color: #b71c1c; margin-top: 25px; margin-bottom: 10px;">🗑️ Supervisor Recovery Folder (30 Days Trash):</h5>
-                <table class="slip-table" style="border: 1px solid #ffcdd2;">
-                    <thead>
-                        <tr style="background-color: #ffebee;">
-                            <th>User ID</th>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Deleted Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trash-sup-table-body">
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="slip-table" style="border: 1px solid #ffcdd2;">
+                        <thead>
+                            <tr style="background-color: #ffebee;">
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Deleted Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trash-sup-table-body">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <div class="card" id="supervisor-section">
             <h2 class="section-title">Supervisor Management Panel (Login with ID & Password)</h2>
-            
+
             <div id="supervisor-auth">
                 <div class="input-group">
                     <label>Supervisor User ID:</label>
@@ -597,20 +622,21 @@
                 </div>
                 <div id="sup-error-msg" class="error-msg"></div>
 
-                <button class="btn" id="sup-action-btn" onclick="loginSupervisor()">Login Supervisor</button>
+                <button type="button" class="btn" id="sup-action-btn" onclick="loginSupervisor()">Login Supervisor</button>
             </div>
 
             <div id="supervisor-form-box" style="display: none;">
-                <button class="logout-btn" onclick="logoutSupervisor()">Logout Supervisor</button>
+                <button type="button" class="logout-btn" onclick="logoutSupervisor()">Logout Supervisor</button>
                 <p style="margin-bottom: 15px; color: #1565c0; font-weight: bold;">
                     Active Supervisor: <span id="active-sup-name-display">-</span>
                 </p>
 
                 <div style="margin-bottom: 20px;">
-                    <button class="tab-btn active" id="tab-add-btn" onclick="switchTab('add')">Add New Worker</button>
-                    <button class="tab-btn" id="tab-edit-btn" onclick="switchTab('edit')">Edit / Manage Worker</button>
-                    <button class="tab-btn" id="tab-company-btn" onclick="switchTab('company')">🏢 Company-wise Worker Lists</button>
-                    <button class="tab-btn" id="tab-pdf-btn" onclick="switchTab('pdf')">Bulk Salary Slip PDF</button>
+                    <button type="button" class="tab-btn active" id="tab-add-btn" onclick="switchTab('add')">Add New Worker</button>
+                    <button type="button" class="tab-btn" id="tab-edit-btn" onclick="switchTab('edit')">Edit / Manage Worker</button>
+                    <button type="button" class="tab-btn" id="tab-company-btn" onclick="switchTab('company')">🏢 Company-wise Worker Lists</button>
+                    <button type="button" class="tab-btn" id="tab-apps-btn" onclick="switchTab('apps')">📩 Job Applications</button>
+                    <button type="button" class="tab-btn" id="tab-pdf-btn" onclick="switchTab('pdf')">Bulk Salary Slip PDF</button>
                 </div>
 
                 <form id="joining-form" onsubmit="processNewJoining(event)">
@@ -691,7 +717,7 @@
                     <div class="input-group">
                         <label>Search Worker (Enter PF Number or Worker ID):</label>
                         <input type="text" id="search-query" placeholder="e.g. WB/CAL/12345/101 or ME-1001">
-                        <button class="btn" style="background-color: #f57c00; margin-top: 5px;" onclick="searchWorkerToEdit()">Search Worker</button>
+                        <button type="button" class="btn" style="background-color: #f57c00; margin-top: 5px;" onclick="searchWorkerToEdit()">Search Worker</button>
                     </div>
 
                     <form id="edit-form" style="display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;" onsubmit="saveEditedWorker(event)">
@@ -752,11 +778,11 @@
                 <div id="company-filter-section" style="display: none;">
                     <h4 style="color: #1b5e20; margin-bottom: 10px;">Company-wise Worker Directory</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Click buttons below to view worker lists filtered by company:</p>
-                    
+
                     <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-blue" style="width: auto; padding: 6px 15px;" onclick="filterWorkersByCompany('ASK Automotive Pvt. Ltd')">🏭 ASK Automotive List</button>
-                        <button class="btn btn-blue" style="width: auto; padding: 6px 15px; background-color: #00796b;" onclick="filterWorkersByCompany('Unicast')">⚙️ Unicast List</button>
-                        <button class="btn" style="width: auto; padding: 6px 15px; background-color: #555;" onclick="filterWorkersByCompany('All')">📋 View All Workers</button>
+                        <button type="button" class="btn btn-blue" style="width: auto; padding: 6px 15px;" onclick="filterWorkersByCompany('ASK Automotive Pvt. Ltd')">🏭 ASK Automotive List</button>
+                        <button type="button" class="btn btn-blue" style="width: auto; padding: 6px 15px; background-color: #00796b;" onclick="filterWorkersByCompany('Unicast')">⚙️ Unicast List</button>
+                        <button type="button" class="btn" style="width: auto; padding: 6px 15px; background-color: #555;" onclick="filterWorkersByCompany('All')">📋 View All Workers</button>
                     </div>
 
                     <h5 id="filter-heading" style="color: #1b5e20; margin-bottom: 10px;">Showing: All Workers</h5>
@@ -778,10 +804,31 @@
                     </div>
                 </div>
 
+                <div id="job-applications-section" style="display: none;">
+                    <h4 style="color: #1565c0; margin-bottom: 10px;">Received Online Job Applications</h4>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Candidates who applied via the online form appear here:</p>
+                    <div style="overflow-x: auto;">
+                        <table class="slip-table">
+                            <thead>
+                                <tr style="background-color: #e3f2fd;">
+                                    <th>App ID</th>
+                                    <th>Candidate Name</th>
+                                    <th>Mobile</th>
+                                    <th>Company</th>
+                                    <th>Qualification</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody id="job-applications-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="bulk-pdf-section" style="display: none;">
                     <h4 style="color: #1565c0; margin-bottom: 10px;">Upload Combined Salary Slip PDF</h4>
                     <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
-                        Upload combined salary slip PDF file here. The system will scan page texts, match <strong>PF Number</strong>, and attach slips to respective worker profiles.
+                        Upload combined salary slip PDF file here. The system will scan all pages, match <strong>PF Number</strong>, and attach single or multi-page slips to respective worker profiles.
                     </p>
 
                     <div class="input-group">
@@ -789,7 +836,7 @@
                         <input type="file" id="bulk-pdf-file" accept="application/pdf">
                     </div>
 
-                    <button class="btn btn-blue" onclick="processAndSplitPDF()">Match & Distribute Salary Slips Automatically</button>
+                    <button type="button" class="btn btn-blue" onclick="processAndSplitPDF()">Match & Distribute Salary Slips Automatically</button>
 
                     <div id="pdf-process-box">
                         <p id="pdf-status-text" style="font-weight: bold; color: #1565c0;">Processing PDF pages...</p>
@@ -801,7 +848,7 @@
                     <p><strong>Assigned User ID:</strong> <span id="gen-userid" style="color: #1565c0; font-size: 18px; font-weight: bold;">-</span></p>
                     <p><strong>Login Password / OTP:</strong> <span id="gen-userpass" style="color: #b71c1c; font-size: 16px; font-weight: bold;">-</span></p>
                     <p><strong>PF Number:</strong> <span id="gen-pf">-</span></p>
-                    <p style="margin-top: 5px; font-size: 13px; color: #555;">User ID & login details have been sent to worker's WhatsApp & mobile via SMS.</p>
+                    <p style="margin-top: 5px; font-size: 13px; color: #555;">Click below to send User ID & login details directly to the worker's WhatsApp:</p>
                     <a id="whatsapp-worker-link" href="#" target="_blank" class="btn" style="width: auto; padding: 6px 15px; background-color: #25d366; text-decoration: none; display:inline-block; margin-top: 8px; font-size: 13px;">💬 Send Login Details via WhatsApp</a>
                 </div>
 
@@ -815,7 +862,7 @@
 
         <div class="card" id="employee-portal">
             <h2 class="section-title">Worker Profile Portal (User ID & Mobile WhatsApp/SMS OTP Login)</h2>
-            
+
             <div id="worker-login-box">
                 <div class="input-group">
                     <label>Worker User ID:</label>
@@ -829,21 +876,22 @@
 
                 <div id="worker-otp-section" style="display: none;">
                     <div class="sms-box" id="worker-otp-display-box" style="margin-bottom: 10px;">
-                        <strong>Generated OTP / Password sent to WhatsApp/SMS:</strong> <span id="worker-otp-code" style="color: #1565c0; font-size: 16px; font-weight: bold;">-</span>
+                        <p style="margin-bottom: 6px;"><strong>✓ 4-Digit OTP Generated!</strong> Send or receive your OTP via WhatsApp below:</p>
+                        <a id="worker-wa-otp-btn" href="#" target="_blank" class="btn" style="width: auto; padding: 5px 12px; background-color: #25d366; font-size: 13px; text-decoration: none; display: inline-block;">📲 Get OTP on WhatsApp</a>
                     </div>
                     <div class="input-group">
-                        <label>Enter OTP Code / Password:</label>
-                        <input type="text" id="worker-otp-input" placeholder="Enter 4-digit Code" maxlength="4">
+                        <label>Enter 4-Digit OTP Code:</label>
+                        <input type="text" id="worker-otp-input" placeholder="Enter 4-digit Code" maxlength="4" oninput="validatePhoneInput(this)">
                     </div>
                 </div>
-                
-                <button class="btn" id="worker-action-btn" onclick="handleWorkerLoginFlow()">Get Password / OTP & View Profile</button>
+
+                <button type="button" class="btn" id="worker-action-btn" onclick="handleWorkerLoginFlow()">Get Password / OTP & View Profile</button>
             </div>
 
             <div id="worker-profile" style="display: none;">
-                <button class="logout-btn" onclick="logoutWorker()">Logout</button>
-                
-                <div class="profile-card">
+                <button type="button" class="logout-btn" onclick="logoutWorker()">Logout</button>
+
+                <div class="profile-card" id="worker-profile-card">
                     <div class="profile-header">
                         <img id="worker-photo" class="profile-img" src="" alt="Worker Photo">
                         <div class="profile-title">
@@ -854,7 +902,7 @@
                     </div>
 
                     <h4 style="color: #1b5e20; text-align: center; margin-bottom: 10px;">Official Worker Profile</h4>
-                    
+
                     <table class="slip-table">
                         <tr>
                             <td class="bold">Company / Client:</td>
@@ -901,7 +949,7 @@
                     </table>
                 </div>
 
-                <button class="btn btn-blue" style="margin-top: 15px;" onclick="window.print()">Download Profile Card (PDF / Print)</button>
+                <button type="button" class="btn btn-blue" style="margin-top: 15px;" onclick="printSection('printing-profile')">Download Profile Card (PDF / Print)</button>
             </div>
         </div>
 
@@ -928,21 +976,26 @@
             }, 'google_translate_element');
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script type="text/javascript">
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        }
 
-        var supervisorAccounts = {
+        // Built-in SVG Default Avatar (Works offline without external placeholder failures)
+        var DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 110 110'><rect width='110' height='110' fill='%23c8e6c9'/><circle cx='55' cy='42' r='20' fill='%232e7d32'/><path d='M20 98 C20 72 90 72 90 98' fill='%232e7d32'/></svg>";
+
+        // Default Initial Data
+        var defaultSupervisors = {
             "SUP-1001": { name: "Ramesh Kumar", phone: "9876543210", pass: "4821", status: "Active" },
             "SUP-1002": { name: "Suresh Das", phone: "9123456789", pass: "9312", status: "Active" }
         };
 
-        var supervisorTrash = {}; // 30-day recovery folder
-
-        var workerDatabase = {
+        var defaultWorkers = {
             "WB/CAL/12345/101": {
                 userid: "ME-1001",
+                userpass: "1234",
                 name: "Monirul Sekh",
                 company: "ASK Automotive Pvt. Ltd",
                 pfNumber: "WB/CAL/12345/101",
@@ -953,15 +1006,39 @@
                 qual: "12th Pass (Higher Secondary)",
                 salary: "₹ 18,500.00",
                 ot: "₹ 90 / Hour",
-                photo: "https://via.placeholder.com/110",
+                photo: DEFAULT_AVATAR,
                 status: "Active",
                 addedBy: "SUP-1001",
                 salarySlipPdf: null
             }
         };
 
+        // Load Persisted Data from LocalStorage
+        var supervisorAccounts = JSON.parse(localStorage.getItem('me_supervisors')) || defaultSupervisors;
+        var supervisorTrash = JSON.parse(localStorage.getItem('me_supervisor_trash')) || {};
+        var workerDatabase = JSON.parse(localStorage.getItem('me_workers')) || defaultWorkers;
+        var jobApplications = JSON.parse(localStorage.getItem('me_job_applications')) || [];
+
+        function saveAllData() {
+            try {
+                localStorage.setItem('me_supervisors', JSON.stringify(supervisorAccounts));
+                localStorage.setItem('me_supervisor_trash', JSON.stringify(supervisorTrash));
+                // Avoid saving temporary blob URLs in localStorage
+                var workersToSave = JSON.parse(JSON.stringify(workerDatabase));
+                for (var pf in workersToSave) {
+                    if (workersToSave[pf].salarySlipPdf && workersToSave[pf].salarySlipPdf.startsWith('blob:')) {
+                        workersToSave[pf].salarySlipPdf = null;
+                    }
+                }
+                localStorage.setItem('me_workers', JSON.stringify(workersToSave));
+                localStorage.setItem('me_job_applications', JSON.stringify(jobApplications));
+            } catch (e) {
+                console.warn("LocalStorage quota warning:", e);
+            }
+        }
+
         var currentLoggedInSup = "";
-        var currentBase64Photo = "https://via.placeholder.com/110";
+        var currentBase64Photo = DEFAULT_AVATAR;
 
         var generatedWorkerOtp = "";
         var currentMatchedWorkerPf = "";
@@ -980,9 +1057,18 @@
 
         function scrollToSection(sectionId) {
             var element = document.getElementById(sectionId);
-            if(element) {
+            if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        function printSection(printClass) {
+            document.body.classList.remove('printing-receipt', 'printing-profile');
+            document.body.classList.add(printClass);
+            window.print();
+            setTimeout(function() {
+                document.body.classList.remove(printClass);
+            }, 500);
         }
 
         function submitPublicJobApplication(e) {
@@ -1001,6 +1087,18 @@
 
             var appId = "ME-APP-" + Math.floor(1000 + Math.random() * 9000);
 
+            jobApplications.unshift({
+                appId: appId,
+                name: name,
+                father: father,
+                phone: phone,
+                idnum: idnum,
+                company: company,
+                qual: qual,
+                appliedDate: new Date().toLocaleDateString()
+            });
+            saveAllData();
+
             document.getElementById('receipt-id').innerText = appId;
             document.getElementById('receipt-name').innerText = name;
             document.getElementById('receipt-father').innerText = father;
@@ -1015,6 +1113,7 @@
             var waLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(waMsg);
             document.getElementById('whatsapp-receipt-btn').href = waLink;
 
+            document.getElementById('public-job-form').reset();
             alert("Application submitted successfully! Receipt copy generated below.");
         }
 
@@ -1046,6 +1145,7 @@
 
         function renderSupervisorPerformanceReport() {
             var tbody = document.getElementById('admin-sup-performance-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             var supCounts = {};
@@ -1082,22 +1182,22 @@
                 var sup = supervisorAccounts[supId];
                 var row = document.createElement('tr');
 
-                var statusBadge = sup.status === 'Active' ? 
-                    '<span class="status-badge status-active">Active</span>' : 
+                var statusBadge = sup.status === 'Active' ?
+                    '<span class="status-badge status-active">Active</span>' :
                     '<span class="status-badge status-inactive">Blocked</span>';
 
-                var toggleBtn = sup.status === 'Active' ? 
-                    '<button class="btn btn-red" style="padding: 4px 8px; font-size: 12px; margin: 0; margin-right: 5px;" onclick="toggleSupStatus(\'' + supId + '\')">Block Access</button>' : 
-                    '<button class="btn" style="padding: 4px 8px; font-size: 12px; margin: 0; margin-right: 5px; background-color: #2e7d32;" onclick="toggleSupStatus(\'' + supId + '\')">Unblock</button>';
+                var toggleBtn = sup.status === 'Active' ?
+                    '<button type="button" class="btn btn-red" style="width: auto; padding: 4px 8px; font-size: 12px; margin: 0 5px 0 0;" onclick="toggleSupStatus(\'' + supId + '\')">Block Access</button>' :
+                    '<button type="button" class="btn" style="width: auto; padding: 4px 8px; font-size: 12px; margin: 0 5px 0 0; background-color: #2e7d32;" onclick="toggleSupStatus(\'' + supId + '\')">Unblock</button>';
 
-                var deleteBtn = '<button class="btn btn-red" style="padding: 4px 8px; font-size: 12px; margin: 0; background-color: #b71c1c;" onclick="deleteSupervisor(\'' + supId + '\')">Delete (Trash)</button>';
+                var deleteBtn = '<button type="button" class="btn btn-red" style="width: auto; padding: 4px 8px; font-size: 12px; margin: 0; background-color: #b71c1c;" onclick="deleteSupervisor(\'' + supId + '\')">Delete (Trash)</button>';
 
                 row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
                                 '<td>' + sup.name + '</td>' +
                                 '<td>' + sup.phone + '</td>' +
                                 '<td>' + statusBadge + '</td>' +
                                 '<td>' + toggleBtn + deleteBtn + '</td>';
-                
+
                 tbody.appendChild(row);
             }
         }
@@ -1112,8 +1212,8 @@
                 var sup = supervisorTrash[supId];
                 var row = document.createElement('tr');
 
-                var restoreBtn = '<button class="btn" style="padding: 4px 8px; font-size: 12px; margin: 0; margin-right: 5px; background-color: #2e7d32;" onclick="restoreSupervisor(\'' + supId + '\')">Restore</button>';
-                var permanentBtn = '<button class="btn btn-red" style="padding: 4px 8px; font-size: 12px; margin: 0;" onclick="permanentDeleteSupervisor(\'' + supId + '\')">Delete Permanently</button>';
+                var restoreBtn = '<button type="button" class="btn" style="width: auto; padding: 4px 8px; font-size: 12px; margin: 0 5px 0 0; background-color: #2e7d32;" onclick="restoreSupervisor(\'' + supId + '\')">Restore</button>';
+                var permanentBtn = '<button type="button" class="btn btn-red" style="width: auto; padding: 4px 8px; font-size: 12px; margin: 0;" onclick="permanentDeleteSupervisor(\'' + supId + '\')">Delete Permanently</button>';
 
                 row.innerHTML = '<td><strong>' + supId + '</strong></td>' +
                                 '<td>' + sup.name + '</td>' +
@@ -1133,6 +1233,7 @@
         function toggleSupStatus(supId) {
             if (supervisorAccounts[supId]) {
                 supervisorAccounts[supId].status = supervisorAccounts[supId].status === 'Active' ? 'Inactive' : 'Active';
+                saveAllData();
                 renderSupervisorTable();
                 renderSupervisorPerformanceReport();
             }
@@ -1144,6 +1245,7 @@
                 supData.deletedDate = new Date().toLocaleDateString();
                 supervisorTrash[supId] = supData;
                 delete supervisorAccounts[supId];
+                saveAllData();
                 renderSupervisorTable();
                 renderSupervisorTrashTable();
                 renderSupervisorPerformanceReport();
@@ -1156,6 +1258,7 @@
                 delete supData.deletedDate;
                 supervisorAccounts[supId] = supData;
                 delete supervisorTrash[supId];
+                saveAllData();
                 renderSupervisorTable();
                 renderSupervisorTrashTable();
                 renderSupervisorPerformanceReport();
@@ -1165,6 +1268,7 @@
         function permanentDeleteSupervisor(supId) {
             if (confirm("Permanently delete supervisor " + supId + "? This action cannot be undone.")) {
                 delete supervisorTrash[supId];
+                saveAllData();
                 renderSupervisorTrashTable();
             }
         }
@@ -1188,6 +1292,7 @@
                 pass: supPass,
                 status: "Active"
             };
+            saveAllData();
 
             document.getElementById('new-sup-uid').innerText = supId;
             document.getElementById('new-sup-pass').innerText = supPass;
@@ -1200,7 +1305,7 @@
             document.getElementById('add-sup-form').reset();
             renderSupervisorTable();
             renderSupervisorPerformanceReport();
-            alert("New Supervisor created! Credentials sent to WhatsApp & mobile " + phone + " successfully.");
+            alert("New Supervisor created! Click the WhatsApp button to send credentials to " + phone + ".");
         }
 
         // Supervisor Login Flow with Blocked User Handling
@@ -1217,7 +1322,7 @@
             }
 
             if (supervisorAccounts[supId].status === "Inactive") {
-                errBox.innerText = "❌ Error: Your User ID is wrong / Your account is blocked!";
+                errBox.innerText = "❌ Error: আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে (Your account is blocked)!";
                 errBox.style.display = 'block';
                 return;
             }
@@ -1228,6 +1333,7 @@
                 document.getElementById('supervisor-form-box').style.display = 'block';
                 document.getElementById('active-sup-name-display').innerText = supervisorAccounts[supId].name + " (ID: " + supId + ")";
                 filterWorkersByCompany('All');
+                renderJobApplicationsTable();
             } else {
                 errBox.innerText = "❌ Error: ভুল পাসওয়ার্ড বা ওটিপি (Wrong Password/OTP)!";
                 errBox.style.display = 'block';
@@ -1251,34 +1357,67 @@
             document.getElementById('tab-add-btn').classList.remove('active');
             document.getElementById('tab-edit-btn').classList.remove('active');
             document.getElementById('tab-company-btn').classList.remove('active');
+            document.getElementById('tab-apps-btn').classList.remove('active');
             document.getElementById('tab-pdf-btn').classList.remove('active');
 
             document.getElementById('joining-form').style.display = 'none';
             document.getElementById('edit-worker-section').style.display = 'none';
             document.getElementById('company-filter-section').style.display = 'none';
+            document.getElementById('job-applications-section').style.display = 'none';
             document.getElementById('bulk-pdf-section').style.display = 'none';
 
-            if(type === 'add') {
+            if (type === 'add') {
                 document.getElementById('tab-add-btn').classList.add('active');
                 document.getElementById('joining-form').style.display = 'block';
-            } else if(type === 'edit') {
+            } else if (type === 'edit') {
                 document.getElementById('tab-edit-btn').classList.add('active');
                 document.getElementById('edit-worker-section').style.display = 'block';
-            } else if(type === 'company') {
+            } else if (type === 'company') {
                 document.getElementById('tab-company-btn').classList.add('active');
                 document.getElementById('company-filter-section').style.display = 'block';
                 filterWorkersByCompany('All');
-            } else if(type === 'pdf') {
+            } else if (type === 'apps') {
+                document.getElementById('tab-apps-btn').classList.add('active');
+                document.getElementById('job-applications-section').style.display = 'block';
+                renderJobApplicationsTable();
+            } else if (type === 'pdf') {
                 document.getElementById('tab-pdf-btn').classList.add('active');
                 document.getElementById('bulk-pdf-section').style.display = 'block';
             }
+        }
+
+        function renderJobApplicationsTable() {
+            var tbody = document.getElementById('job-applications-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (jobApplications.length === 0) {
+                var emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="6" style="text-align: center; color: #888;">No online job applications received yet.</td>';
+                tbody.appendChild(emptyRow);
+                return;
+            }
+
+            jobApplications.forEach(function(app) {
+                var row = document.createElement('tr');
+                var waText = "Hello " + app.name + ", regarding your Moni Enterprises job application (" + app.appId + ") for " + app.company + ".";
+                var waHref = "https://wa.me/91" + app.phone + "?text=" + encodeURIComponent(waText);
+
+                row.innerHTML = '<td><strong>' + app.appId + '</strong></td>' +
+                                '<td>' + app.name + '<br><small style="color:#666;">S/O: ' + app.father + '</small></td>' +
+                                '<td>' + app.phone + '</td>' +
+                                '<td>' + app.company + '</td>' +
+                                '<td>' + app.qual + '</td>' +
+                                '<td><a href="' + waHref + '" target="_blank" class="btn" style="width:auto; padding:4px 10px; font-size:12px; background:#25d366; text-decoration:none; display:inline-block;">WhatsApp</a></td>';
+                tbody.appendChild(row);
+            });
         }
 
         function filterWorkersByCompany(companyName) {
             var tbody = document.getElementById('company-filtered-table-body');
             tbody.innerHTML = '';
             var heading = document.getElementById('filter-heading');
-            
+
             heading.innerText = companyName === 'All' ? "Showing: All Workers" : "Showing Workers for: " + companyName;
 
             var count = 0;
@@ -1288,7 +1427,7 @@
                     count++;
                     var row = document.createElement('tr');
                     var badge = w.status === 'Active' ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-inactive">Inactive</span>';
-                    
+
                     row.innerHTML = '<td><strong>' + w.userid + '</strong></td>' +
                                     '<td>' + w.name + '</td>' +
                                     '<td>' + w.pfNumber + '</td>' +
@@ -1299,7 +1438,7 @@
                 }
             }
 
-            if(count === 0) {
+            if (count === 0) {
                 var row = document.createElement('tr');
                 row.innerHTML = '<td colspan="6" style="text-align: center; color: #888;">No workers found for this company.</td>';
                 tbody.appendChild(row);
@@ -1315,14 +1454,14 @@
                 document.getElementById('preview-text').style.display = 'none';
                 currentBase64Photo = reader.result;
             };
-            if(event.target.files[0]) {
+            if (event.target.files[0]) {
                 reader.readAsDataURL(event.target.files[0]);
             }
         }
 
         function processNewJoining(e) {
             e.preventDefault();
-            
+
             var name = document.getElementById('new-name').value.trim();
             var father = document.getElementById('new-father').value.trim();
             var phone = document.getElementById('new-phone').value.trim();
@@ -1365,6 +1504,7 @@
                 addedBy: currentLoggedInSup,
                 salarySlipPdf: null
             };
+            saveAllData();
 
             document.getElementById('gen-userid').innerText = userId;
             document.getElementById('gen-userpass').innerText = userPass;
@@ -1378,10 +1518,10 @@
             document.getElementById('joining-form').reset();
             document.getElementById('img-preview').style.display = 'none';
             document.getElementById('preview-text').style.display = 'block';
-            currentBase64Photo = "https://via.placeholder.com/110";
+            currentBase64Photo = DEFAULT_AVATAR;
 
             renderSupervisorPerformanceReport();
-            alert("Worker registered successfully & login credentials sent via WhatsApp & SMS!");
+            alert("Worker registered successfully! Click the WhatsApp button below to send login credentials.");
         }
 
         function searchWorkerToEdit() {
@@ -1419,7 +1559,7 @@
         function saveEditedWorker(e) {
             e.preventDefault();
             var pf = document.getElementById('edit-target-pf').value;
-            
+
             if (workerDatabase[pf]) {
                 workerDatabase[pf].name = document.getElementById('edit-name').value.trim();
                 workerDatabase[pf].father = document.getElementById('edit-father').value.trim();
@@ -1429,6 +1569,7 @@
                 workerDatabase[pf].salary = document.getElementById('edit-salary').value.trim();
                 workerDatabase[pf].ot = document.getElementById('edit-ot').value.trim();
                 workerDatabase[pf].status = document.getElementById('edit-status').value;
+                saveAllData();
 
                 document.getElementById('edit-success-box').style.display = 'block';
                 document.getElementById('edit-form').style.display = 'none';
@@ -1437,6 +1578,7 @@
             }
         }
 
+        // Fixed Multi-Page PDF Splitter & Matcher
         async function processAndSplitPDF() {
             var fileInput = document.getElementById('bulk-pdf-file');
             var statusText = document.getElementById('pdf-status-text');
@@ -1447,6 +1589,11 @@
                 return;
             }
 
+            if (typeof pdfjsLib === 'undefined' || typeof PDFLib === 'undefined') {
+                statusText.innerText = "❌ Error: PDF libraries failed to load. Please check internet connection.";
+                return;
+            }
+
             statusText.innerText = "Reading PDF file...";
             var fileReader = new FileReader();
 
@@ -1454,10 +1601,10 @@
                 try {
                     var typedarray = new Uint8Array(this.result);
                     var pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
-                    statusText.innerText = "Total pages found: " + pdfDoc.numPages + ". Processing pages...";
+                    statusText.innerText = "Total pages found: " + pdfDoc.numPages + ". Scanning pages...";
 
                     var sourcePdfDoc = await PDFLib.PDFDocument.load(this.result);
-                    var matchedCount = 0;
+                    var matchedPagesByPf = {};
 
                     for (var i = 1; i <= pdfDoc.numPages; i++) {
                         var page = await pdfDoc.getPage(i);
@@ -1466,22 +1613,31 @@
 
                         for (var pf in workerDatabase) {
                             if (pageText.includes(pf)) {
-                                var singlePdf = await PDFLib.PDFDocument.create();
-                                var [copiedPage] = await singlePdf.copyPages(sourcePdfDoc, [i - 1]);
-                                singlePdf.addPage(copiedPage);
-                                var pdfBytes = await singlePdf.save();
-                                
-                                var blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                                var blobUrl = URL.createObjectURL(blob);
-                                workerDatabase[pf].salarySlipPdf = blobUrl;
-                                matchedCount++;
-                                break;
+                                if (!matchedPagesByPf[pf]) {
+                                    matchedPagesByPf[pf] = [];
+                                }
+                                matchedPagesByPf[pf].push(i - 1);
                             }
                         }
                     }
 
-                    statusText.innerText = "✓ Processing Complete! Matched and attached salary slips for " + matchedCount + " workers.";
-                    alert("Salary slips successfully distributed to respective worker profiles!");
+                    var matchedWorkerCount = 0;
+                    for (var pf in matchedPagesByPf) {
+                        var singlePdf = await PDFLib.PDFDocument.create();
+                        var copiedPages = await singlePdf.copyPages(sourcePdfDoc, matchedPagesByPf[pf]);
+                        copiedPages.forEach(function(copiedPage) {
+                            singlePdf.addPage(copiedPage);
+                        });
+                        var pdfBytes = await singlePdf.save();
+
+                        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        var blobUrl = URL.createObjectURL(blob);
+                        workerDatabase[pf].salarySlipPdf = blobUrl;
+                        matchedWorkerCount++;
+                    }
+
+                    statusText.innerText = "✓ Processing Complete! Matched and attached salary slips for " + matchedWorkerCount + " workers.";
+                    alert("Salary slips successfully distributed to " + matchedWorkerCount + " worker profiles!");
                 } catch (err) {
                     console.error(err);
                     statusText.innerText = "❌ Error processing PDF file.";
@@ -1519,32 +1675,31 @@
             }
 
             currentMatchedWorkerPf = foundPf;
-            generatedWorkerOtp = workerDatabase[foundPf].userpass || "1234";
+            // Generate fresh 4-digit OTP (or fallback to assigned password)
+            generatedWorkerOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
-            document.getElementById('worker-otp-code').innerText = generatedWorkerOtp;
+            var workerOtpMsg = "Your Moni Enterprises Login OTP is: " + generatedWorkerOtp + ". Please enter this code to access your worker profile.";
+            var waLoginLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(workerOtpMsg);
+            document.getElementById('worker-wa-otp-btn').href = waLoginLink;
+
             document.getElementById('worker-otp-section').style.display = 'block';
             document.getElementById('worker-action-btn').innerText = "Verify OTP & Open Profile";
             document.getElementById('worker-action-btn').setAttribute('onclick', 'verifyWorkerOtpAndLogin()');
-
-            var workerOtpMsg = "Your Moni Enterprises Login Password/OTP is: " + generatedWorkerOtp + ". Please use this to access your worker portal.";
-            var waLoginLink = "https://wa.me/91" + phone + "?text=" + encodeURIComponent(workerOtpMsg);
-            
-            alert("Password / OTP sent to WhatsApp & SMS: " + generatedWorkerOtp);
         }
 
         function verifyWorkerOtpAndLogin() {
             var enteredOtp = document.getElementById('worker-otp-input').value.trim();
             var errBox = document.getElementById('worker-error-msg');
+            var w = workerDatabase[currentMatchedWorkerPf];
 
-            if (enteredOtp !== generatedWorkerOtp) {
+            if (!w || (enteredOtp !== generatedWorkerOtp && enteredOtp !== w.userpass)) {
                 errBox.innerText = "❌ Error: ভুল ওটিপি বা পাসওয়ার্ড (Wrong OTP or Password)!";
                 errBox.style.display = 'block';
                 return;
             }
 
-            var w = workerDatabase[currentMatchedWorkerPf];
-
-            document.getElementById('worker-photo').src = w.photo;
+            errBox.style.display = 'none';
+            document.getElementById('worker-photo').src = w.photo || DEFAULT_AVATAR;
             document.getElementById('worker-name').innerText = w.name;
             document.getElementById('worker-pfno').innerText = "PF No: " + w.pfNumber;
             document.getElementById('worker-userid').innerText = w.userid;
@@ -1578,6 +1733,8 @@
         }
 
         function logoutWorker() {
+            generatedWorkerOtp = "";
+            currentMatchedWorkerPf = "";
             document.getElementById('worker-profile').style.display = 'none';
             document.getElementById('worker-login-box').style.display = 'block';
             document.getElementById('worker-userid-login').value = '';
